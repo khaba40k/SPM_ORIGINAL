@@ -1,0 +1,74 @@
+[21-Oct-2024 19:01:12 Europe/Kiev] PHP Parse error:  syntax error, unexpected token "echo" in /home2/sholompr/public_html/blok/exp/expenses_menu.php on line 19
+[23-Oct-2024 14:27:30 Europe/Kiev] PHP Fatal error:  Uncaught Error: Call to undefined function outVal() in /home2/sholompr/public_html/blok/exp/record_in.php:4
+Stack trace:
+#0 {main}
+  thrown in /home2/sholompr/public_html/blok/exp/record_in.php on line 4
+[23-Oct-2024 14:28:05 Europe/Kiev] PHP Warning:  Undefined variable $dat_now in /home2/sholompr/public_html/blok/exp/record_in.php on line 4
+[23-Oct-2024 14:28:05 Europe/Kiev] PHP Stack trace:
+[23-Oct-2024 14:28:05 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/exp/record_in.php:0
+[23-Oct-2024 14:28:05 Europe/Kiev] PHP Fatal error:  Uncaught Error: Call to a member function format() on null in /home2/sholompr/public_html/blok/exp/record_in.php:4
+Stack trace:
+#0 {main}
+  thrown in /home2/sholompr/public_html/blok/exp/record_in.php on line 4
+[23-Oct-2024 14:30:40 Europe/Kiev] PHP Fatal error:  Uncaught TypeError: date(): Argument #2 ($timestamp) must be of type ?int, string given in /home2/sholompr/public_html/blok/exp/record_in.php:4
+Stack trace:
+#0 /home2/sholompr/public_html/blok/exp/record_in.php(4): date()
+#1 {main}
+  thrown in /home2/sholompr/public_html/blok/exp/record_in.php on line 4
+[23-Oct-2024 14:31:51 Europe/Kiev] PHP Fatal error:  Uncaught TypeError: date(): Argument #2 ($timestamp) must be of type ?int, string given in /home2/sholompr/public_html/blok/exp/record_in.php:4
+Stack trace:
+#0 /home2/sholompr/public_html/blok/exp/record_in.php(4): date()
+#1 {main}
+  thrown in /home2/sholompr/public_html/blok/exp/record_in.php on line 4
+[23-Oct-2024 14:42:45 Europe/Kiev] PHP Fatal error:  Uncaught Error: Call to a member function format() on bool in /home2/sholompr/public_html/blok/exp/record_in.php:6
+Stack trace:
+#0 {main}
+  thrown in /home2/sholompr/public_html/blok/exp/record_in.php on line 6
+[23-Oct-2024 14:44:25 Europe/Kiev] PHP Fatal error:  Uncaught Error: Call to undefined function  14:44:25() in /home2/sholompr/public_html/blok/exp/record_in.php:6
+Stack trace:
+#0 {main}
+  thrown in /home2/sholompr/public_html/blok/exp/record_in.php on line 6
+[23-Oct-2024 14:45:43 Europe/Kiev] PHP Fatal error:  Uncaught TypeError: Unsupported operand types: string + string in /home2/sholompr/public_html/class/universal.php:147
+Stack trace:
+#0 /home2/sholompr/public_html/class/universal.php(110): SQLconn->OutSqlVal()
+#1 /home2/sholompr/public_html/blok/exp/record_in.php(12): SQLconn->INSERT()
+#2 {main}
+  thrown in /home2/sholompr/public_html/class/universal.php on line 147
+[25-Oct-2024 08:39:26 Europe/Kiev] PHP Warning:  Undefined array key 0 in /home2/sholompr/public_html/blok/exp/jurnal.php on line 17
+[25-Oct-2024 08:39:26 Europe/Kiev] PHP Stack trace:
+[25-Oct-2024 08:39:26 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/exp/jurnal.php:0
+[25-Oct-2024 08:39:26 Europe/Kiev] PHP Warning:  Trying to access array offset on value of type null in /home2/sholompr/public_html/blok/exp/jurnal.php on line 17
+[25-Oct-2024 08:39:26 Europe/Kiev] PHP Stack trace:
+[25-Oct-2024 08:39:26 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/exp/jurnal.php:0
+[25-Oct-2024 08:39:26 Europe/Kiev] PHP Fatal error:  Uncaught Error: Call to a member function format() on bool in /home2/sholompr/public_html/blok/exp/jurnal.php:19
+Stack trace:
+#0 {main}
+  thrown in /home2/sholompr/public_html/blok/exp/jurnal.php on line 19
+[25-Oct-2024 12:15:20 Europe/Kiev] PHP Warning:  Undefined array key "logged" in /home2/sholompr/public_html/blok/exp/jurnal.php on line 79
+[25-Oct-2024 12:15:20 Europe/Kiev] PHP Stack trace:
+[25-Oct-2024 12:15:20 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/exp/jurnal.php:0
+[25-Oct-2024 12:15:20 Europe/Kiev] PHP Warning:  Undefined array key "" in /home2/sholompr/public_html/blok/exp/jurnal.php on line 79
+[25-Oct-2024 12:15:20 Europe/Kiev] PHP Stack trace:
+[25-Oct-2024 12:15:20 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/exp/jurnal.php:0
+[25-Oct-2024 12:15:46 Europe/Kiev] PHP Warning:  Undefined array key "logged" in /home2/sholompr/public_html/blok/exp/jurnal.php on line 79
+[25-Oct-2024 12:15:46 Europe/Kiev] PHP Stack trace:
+[25-Oct-2024 12:15:46 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/exp/jurnal.php:0
+[25-Oct-2024 12:15:46 Europe/Kiev] PHP Warning:  Undefined array key "" in /home2/sholompr/public_html/blok/exp/jurnal.php on line 79
+[25-Oct-2024 12:15:46 Europe/Kiev] PHP Stack trace:
+[25-Oct-2024 12:15:46 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/exp/jurnal.php:0
+[10-Dec-2024 19:04:20 Europe/Kiev] PHP Warning:  Undefined array key "logged" in /home2/sholompr/public_html/blok/exp/expenses.php on line 7
+[10-Dec-2024 19:04:20 Europe/Kiev] PHP Stack trace:
+[10-Dec-2024 19:04:20 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/exp/expenses.php:0
+[16-Dec-2024 19:17:47 Europe/Kiev] PHP Warning:  mysqli_connect(): (HY000/1040): Too many connections in /home2/sholompr/public_html/class/universal.php on line 30
+[16-Dec-2024 19:17:47 Europe/Kiev] PHP Stack trace:
+[16-Dec-2024 19:17:47 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/exp/record_in.php:0
+[16-Dec-2024 19:17:47 Europe/Kiev] PHP   2. SQLconn->__construct($query = *uninitialized*, $keepAlive = *uninitialized*) /home2/sholompr/public_html/blok/exp/record_in.php:12
+[16-Dec-2024 19:17:47 Europe/Kiev] PHP   3. SQLconn->connect() /home2/sholompr/public_html/class/universal.php:22
+[16-Dec-2024 19:17:47 Europe/Kiev] PHP   4. mysqli_connect($hostname = '127.0.0.1', $username = 'sholompr_admin', $password = 'R[$cB{&A5n]$', $database = 'sholompr_data') /home2/sholompr/public_html/class/universal.php:30
+[16-Dec-2024 19:17:47 Europe/Kiev] PHP Fatal error:  Uncaught TypeError: mysqli_query(): Argument #1 ($mysql) must be of type mysqli, bool given in /home2/sholompr/public_html/class/universal.php:32
+Stack trace:
+#0 /home2/sholompr/public_html/class/universal.php(32): mysqli_query()
+#1 /home2/sholompr/public_html/class/universal.php(22): SQLconn->connect()
+#2 /home2/sholompr/public_html/blok/exp/record_in.php(12): SQLconn->__construct()
+#3 {main}
+  thrown in /home2/sholompr/public_html/class/universal.php on line 32

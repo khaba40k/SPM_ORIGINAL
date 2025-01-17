@@ -1,0 +1,20 @@
+[03-Mar-2024 15:51:01 UTC] PHP Warning:  foreach() argument must be of type array|object, bool given in /home2/sholompr/public_html/class/universal.php on line 45
+[03-Mar-2024 15:51:01 UTC] PHP Stack trace:
+[03-Mar-2024 15:51:01 UTC] PHP   1. {main}() /home2/sholompr/public_html/blok/zvit/table_sum.php:0
+[03-Mar-2024 15:51:01 UTC] PHP   2. SQLconn->__invoke($query = 'SET SQL_BIG_SELECTS = 1', $keepAlive = *uninitialized*) /home2/sholompr/public_html/blok/zvit/table_sum.php:28
+[03-Mar-2024 15:51:01 UTC] PHP   3. SQLconn->query($q = 'SET SQL_BIG_SELECTS = 1', $keepAlive = TRUE) /home2/sholompr/public_html/class/universal.php:60
+[03-Mar-2024 15:51:02 UTC] PHP Warning:  foreach() argument must be of type array|object, bool given in /home2/sholompr/public_html/class/universal.php on line 45
+[03-Mar-2024 15:51:02 UTC] PHP Stack trace:
+[03-Mar-2024 15:51:02 UTC] PHP   1. {main}() /home2/sholompr/public_html/blok/zvit/table_sum.php:0
+[03-Mar-2024 15:51:02 UTC] PHP   2. SQLconn->__invoke($query = 'SET SQL_BIG_SELECTS = 1', $keepAlive = *uninitialized*) /home2/sholompr/public_html/blok/zvit/table_sum.php:28
+[03-Mar-2024 15:51:02 UTC] PHP   3. SQLconn->query($q = 'SET SQL_BIG_SELECTS = 1', $keepAlive = TRUE) /home2/sholompr/public_html/class/universal.php:60
+[03-Mar-2024 15:51:03 UTC] PHP Warning:  foreach() argument must be of type array|object, bool given in /home2/sholompr/public_html/class/universal.php on line 45
+[03-Mar-2024 15:51:03 UTC] PHP Stack trace:
+[03-Mar-2024 15:51:03 UTC] PHP   1. {main}() /home2/sholompr/public_html/blok/zvit/table_sum.php:0
+[03-Mar-2024 15:51:03 UTC] PHP   2. SQLconn->__invoke($query = 'SET SQL_BIG_SELECTS = 1', $keepAlive = *uninitialized*) /home2/sholompr/public_html/blok/zvit/table_sum.php:28
+[03-Mar-2024 15:51:03 UTC] PHP   3. SQLconn->query($q = 'SET SQL_BIG_SELECTS = 1', $keepAlive = TRUE) /home2/sholompr/public_html/class/universal.php:60
+[03-Mar-2024 15:51:03 UTC] PHP Warning:  foreach() argument must be of type array|object, bool given in /home2/sholompr/public_html/class/universal.php on line 45
+[03-Mar-2024 15:51:03 UTC] PHP Stack trace:
+[03-Mar-2024 15:51:03 UTC] PHP   1. {main}() /home2/sholompr/public_html/blok/zvit/table_sum.php:0
+[03-Mar-2024 15:51:03 UTC] PHP   2. SQLconn->__invoke($query = 'SET SQL_BIG_SELECTS = 1', $keepAlive = *uninitialized*) /home2/sholompr/public_html/blok/zvit/table_sum.php:28
+[03-Mar-2024 15:51:03 UTC] PHP   3. SQLconn->query($q = 'SET SQL_BIG_SELECTS = 1', $keepAlive = TRUE) /home2/sholompr/public_html/class/universal.php:60

@@ -1,0 +1,27 @@
+﻿<Project Sdk="Devsense.Php.Sdk">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>568dac4c-c89d-4215-ac6b-b42ae6ce8be0</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup>
+    <EnvName>Custom</EnvName>
+    <RuntimeVersion>8.0</RuntimeVersion>
+    <CustomServerUrl>https://sholompromax.com/</CustomServerUrl>
+    <SaveServerSettingsInUserFile>false</SaveServerSettingsInUserFile>
+    <CustomXdebugPort>9000</CustomXdebugPort>
+    <DebugMappingMethod>Automatic</DebugMappingMethod>
+    <DebugPathMapping />
+    <DBGpProxyEnabled>false</DBGpProxyEnabled>
+    <DBGpProxyHost />
+    <DBGpProxyPort>9001</DBGpProxyPort>
+    <IdeKey>565D33</IdeKey>
+    <PHPDevHostName>localhost</PHPDevHostName>
+    <PHPDevAutoPort>true</PHPDevAutoPort>
+    <PHPDevRouting />
+    <RootNamespace>SPM_ORIGINAL</RootNamespace>
+    <WebRoot>https://sholompromax.com/</WebRoot>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Remove="tests\**" />
+    <Content Remove="README.ua.md" />
+  </ItemGroup>
+</Project>

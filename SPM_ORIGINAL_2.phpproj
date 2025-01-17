@@ -1,0 +1,12 @@
+<Project Sdk="Devsense.Php.Sdk">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>d0d56c24-d620-4cd7-9d6c-14ee4ae43ab6</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup>
+    <EnvName>Custom</EnvName>
+    <RuntimeVersion>8.0</RuntimeVersion>
+    <CustomServerUrl>https://sholompromax.com</CustomServerUrl>
+    <RootNamespace>SPM_ORIGINAL_2</RootNamespace>
+    <WebRoot />
+  </PropertyGroup>
+</Project>
