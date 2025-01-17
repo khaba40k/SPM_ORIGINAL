@@ -14,10 +14,12 @@ conn_local.php
 *.md
 *.config
 *.txt
-vendor/
-test/
-tests/
-src/
+vendor/*
+test/*
+tests/*
+src/*
+img/*
+ii/*
 
 # User-specific files
 *.rsuser

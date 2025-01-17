@@ -8,5 +8,13 @@
     <CustomServerUrl>https://sholompromax.com</CustomServerUrl>
     <RootNamespace>SPM_ORIGINAL_2</RootNamespace>
     <WebRoot />
+    <SaveServerSettingsInUserFile>false</SaveServerSettingsInUserFile>
+    <CustomXdebugPort>9000</CustomXdebugPort>
+    <DebugMappingMethod>Automatic</DebugMappingMethod>
+    <DebugPathMapping />
+    <DBGpProxyEnabled>false</DBGpProxyEnabled>
+    <DBGpProxyHost />
+    <DBGpProxyPort>9001</DBGpProxyPort>
+    <IdeKey>D141AAA8</IdeKey>
   </PropertyGroup>
 </Project>
