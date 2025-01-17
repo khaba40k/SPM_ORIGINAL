@@ -230,12 +230,12 @@ class NovaPay {
         this.#CITY_SELECT.addEventListener("change", (obj) => {
             this.#CITY_CHANGE_EVENT(obj.target.options[obj.target.selectedIndex].text, obj.target.value)
         });
-        this.#WAREHOUSE_SELECT.addEventListener("change", (obj) => { this.#WAREHOUSE_CHANGE_EVENT(this, obj.target.value) });
+        this.#WAREHOUSE_SELECT.addEventListener("change", (obj) => { this.#WAREHOUSE_CHANGE_EVENT(obj.target.value) });
 
         this.#_WAREHOUSE_FINDER = new WAREHOUSE_FINDER(token, [
             "9a68df70-0267-42a8-bb5c-37f427e36ee4",
             "841339c7-591a-42e2-8233-7a0a00f0ed6f"
-        ], (html, number) => { this.#viddNumber = number, this.#WAREHOUSE_SELECT.innerHTML = html; this.#WAREHOUSE_CHANGE_EVENT(this, number) });
+        ], (html, number) => { this.#viddNumber = number, this.#WAREHOUSE_SELECT.innerHTML = html; this.#WAREHOUSE_CHANGE_EVENT(number) });
 
         if (loaded) {
             this.#FIND(this, this.#INPUT_FIELD.value);
@@ -250,26 +250,26 @@ class NovaPay {
 
     #CITY_CHANGE_EVENT(city, ref) {
 
-        this.#SET_VIDD(ref, me.#viddNumber);
+        this.#SET_VIDD(ref, this.#viddNumber);
 
         this.#INPUT_FIELD.value = city + ", № " + (this.#viddNumber != 0 ? this.#viddNumber : "");
 
         this.#CurrentCityRef = ref;
     }
 
-    #WAREHOUSE_CHANGE_EVENT(me, number) {
+    #WAREHOUSE_CHANGE_EVENT(number) {
         if (number > 0) {
-            me.#viddNumber = number;
-            me.#INPUT_FIELD.value = me.#CITY_SELECT.options[me.#CITY_SELECT.selectedIndex].text + ", № " + me.#viddNumber;
+            this.#viddNumber = number;
+            this.#INPUT_FIELD.value = this.#CITY_SELECT.options[this.#CITY_SELECT.selectedIndex].text + ", № " + this.#viddNumber;
         }
     }
 
     #FIND(me, text) {
         let temp_num = me.#getNumberByString(text);
 
-        if (temp_num != me.#viddNumber) {
-            console.log("НОМЕР ЗМІНЕНО [" + me.#viddNumber + " => " + temp_num + "] CityRef: " + me.#CurrentCityRef);
-        }
+        //if (temp_num != me.#viddNumber) {
+        //    console.log("НОМЕР ЗМІНЕНО [" + me.#viddNumber + " => " + temp_num + "] CityRef: " + me.#CurrentCityRef);
+        //}
 
         text = me.#TRANS_LITER(text.toLowerCase().trim());
 
@@ -534,7 +534,7 @@ class WAREHOUSE_FINDER {
                     'Content-Type': 'application/json'
                 },
                 success: function (data) {
-                    console.log("FIND: " + type);
+                    //console.log("FIND: " + type);
 
                     if (data.data.length == 0) return;
 
