@@ -17,4 +17,7 @@
     <DBGpProxyPort>9001</DBGpProxyPort>
     <IdeKey>D141AAA8</IdeKey>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Remove="js\server.js" />
+  </ItemGroup>
 </Project>

@@ -235,7 +235,7 @@ class NovaPay {
         this.#_WAREHOUSE_FINDER = new WAREHOUSE_FINDER(token, [
             "9a68df70-0267-42a8-bb5c-37f427e36ee4",
             "841339c7-591a-42e2-8233-7a0a00f0ed6f"
-        ], (html, number) => { this.#viddNumber = number, this.#WAREHOUSE_SELECT.innerHTML = html; this.#WAREHOUSE_CHANGE_EVENT(number) });
+        ],  this.#WAREHOUSE_SELECT);
 
         if (loaded) {
             this.#FIND(this, this.#INPUT_FIELD.value);
@@ -258,67 +258,166 @@ class NovaPay {
     }
 
     #WAREHOUSE_CHANGE_EVENT(number) {
-        if (number > 0) {
-            this.#viddNumber = number;
-            this.#INPUT_FIELD.value = this.#CITY_SELECT.options[this.#CITY_SELECT.selectedIndex].text + ", № " + this.#viddNumber;
+        if (number > 0 && number != this.#viddNumber) {
+            this.#INPUT_FIELD.value = this.#CITY_SELECT.options[this.#CITY_SELECT.selectedIndex].text + ", № " + number;
         }
+
+        this.#viddNumber = number;
+    }
+
+    #CLEAR() {
+        this.#DATA_LIST.innerHTML = "";
+        this.#CITY_SELECT.innerHTML = "";
+        this.#WAREHOUSE_SELECT.innerHTML = "";
+        this.#FINDED_ARRAY = [];
+        console.log("ОЧИЩЕНО");
     }
 
     #FIND(me, text) {
-        let temp_num = me.#getNumberByString(text);
 
-        //if (temp_num != me.#viddNumber) {
-        //    console.log("НОМЕР ЗМІНЕНО [" + me.#viddNumber + " => " + temp_num + "] CityRef: " + me.#CurrentCityRef);
-        //}
+        let getNumberByString = function (str) {
+            let out = ""; let started = false;
+
+            let numStart = str.indexOf("№") > -1 ? str.indexOf("№") : str.indexOf("#");
+
+            if (numStart > -1) {
+                for (let i = numStart; i < str.length; i++) {
+                    if (IsNumeric(str[i])) {
+                        started = true;
+                        out = out.toString() + str[i];
+                    } else if (started) {
+                        break;
+                    }
+                }
+            } else {
+                for (let i = str.length - 1; i >= 0; i--) {
+                    if (IsNumeric(str[i])) {
+                        started = true;
+                        out = str[i] + out.toString();
+                    } else if (started) {
+                        break;
+                    }
+                }
+            }
+
+            if (out.length < 7) {
+                return out != "" ? out * 1 : 0;
+            } else {
+                return getNumberByString(str.replace(out, ""));
+            }
+
+        };
+
+        let temp_num = getNumberByString(text);
+
+        console.clear();
 
         text = me.#TRANS_LITER(text.toLowerCase().trim());
 
         if (text.length < 3) {
-            me.#DATA_LIST.innerHTML = "";
-            me.#CITY_SELECT.innerHTML = "";
-            me.#WAREHOUSE_SELECT.innerHTML = "";
+            me.#CLEAR();
 
             me.#viddNumber = temp_num;
-            me.#FINDED_ARRAY = [];
             return false;
         }
 
-        let editStr = function (str) {
-            str = str.replace(/[#|№].*/gi, '').trim();
-            str = str.replace(/[^А-яїі\s\'-]/gi, '').trim();
+        text = me.#EDIT_STR(text);
 
-            let arr = str.split(" ");
-
-            str = "";
-
-            arr.forEach((w) => { if (w.length > 3) str += w + " "; });
-
-            return str.trim();
-        }
-
-        text = editStr(text);
-
-        if (me.#CurrentTEXT == text && me.#viddNumber == temp_num) {
-            return;
+        if (me.#CurrentTEXT == text && me.#viddNumber == temp_num && me.#FINDED_ARRAY.length > 0) {
+            console.log("ТЕКСТ НЕ ЗМІНИВСЯ; НОМЕР НЕ ЗМІНИВСЯ; ДАНІ ПІДГРУЖЕНО");
+            return true;
         } else if (me.#CurrentTEXT == text) {
+            console.log("ТЕКСТ НЕ ЗМІНИВСЯ");
+
             me.#viddNumber = temp_num;
+
             me.#SET_VIDD(me.#CurrentCityRef, temp_num);
-            return;
+
+            return true;
         }
+
+        console.log("ТЕКСТ ЗМІНИВСЯ");
 
         me.#viddNumber = temp_num;
 
-        me.#DATA_LIST.innerHTML = "";
-        me.#CITY_SELECT.innerHTML = "";
-        me.#WAREHOUSE_SELECT.innerHTML = "";
+        //me.#CLEAR();
 
         me.#CurrentTEXT = text;
 
         me.#FINDCITIES(text);
+
+        return true;
+    }
+
+    #EDIT_STR(str) {
+        let CityOblToStartPos = function (txt) {
+            let chars = ["обл.", "область", " обл"];
+            let indStart = 0;
+            let obl = ""; let cit = "";
+
+            if (chars.some((ch) => { indStart = txt.indexOf(ch); txt = txt.replace(ch, ""); return indStart >= 0 })) {
+
+                let prevSpase = txt.lastIndexOf(" ", indStart - 2);
+
+                if (prevSpase > 0) {
+                    obl = txt.substring(prevSpase, indStart);
+                }
+            }
+
+            chars = ["м.", " м ", "місто ", "с.", "смт", "с.м.т.", "село ", "село.", "селище"];
+            indStart = 0;
+
+            if (chars.some((ch) => { indStart = txt.indexOf(ch); txt = txt.replace(ch, ""); return indStart >= 0 })) {
+                let nextSpace = txt.indexOf(" ", indStart + 1);
+
+                if (nextSpace > 0) {
+                    cit = txt.substring(indStart, nextSpace);
+                } else {
+                    cit = txt.substring(indStart);
+                }
+
+            }
+
+            txt = txt.replace(obl, "").replace(cit, "");
+
+            return cit + obl + txt;
+        }
+
+        str = CityOblToStartPos(str);
+
+        str = str.replace(/[#|№].*/gi, '').trim();
+        str = str.replace(/[^А-яєїі\s\'-]/gi, ' ').trim();
+        str = str.replace(/(^|[^А-я])від[^\s]+/gi, '').trim();
+
+        let arr = str.split(" ");
+
+        str = "";
+
+        arr.forEach((w) => { if (w.length > 3) str += w + " "; });
+
+        return str.trim();
     }
 
     #FINDCITIES(findSTR) {
         let me = this;
+
+        console.log("FIND STRING: [" + findSTR + "]");
+
+        let removeWord = function (input) {
+            let arr = input.split(" ");
+            let temp_str = "";
+
+            if (arr.length > 1) {
+
+                for (let i = 0; i < (arr.length - 1); i++) {
+                    temp_str += arr[i] + " ";
+                }
+
+                return temp_str.trim();
+            } else {
+                return input;
+            }
+        }
 
         $.ajax({
             type: 'POST',
@@ -339,28 +438,34 @@ class NovaPay {
             },
             success: function (texts) {
                 me.#FINDED_ARRAY = me.#ExcludeEmptyWarehouse(texts.data[0].Addresses);
+
+                console.log("FINDED CITYES: " + me.#FINDED_ARRAY.length);
+
                 if (me.#FINDED_ARRAY.length > 0) {
 
                     me.#FINDED_ARRAY.forEach((c) => {
                         me.#SET_NORM_NAME(c);
                     });
 
-                    me.#DATA_LIST.innerHTML = me.#GET_OPTION_DATALIST();
                     me.#CITY_SELECT.innerHTML = me.#GET_OPTION_SELECT();
+                    me.#DATA_LIST.innerHTML = me.#GET_OPTION_DATALIST();
 
                     if (me.#CITY_SELECT.value != 1) {
-
-                        me.#SET_VIDD(me.#CITY_SELECT.value, me.#viddNumber);
 
                         if (!me.#LOADED) {
                             me.#INPUT_FIELD.value = me.#CITY_SELECT.options[me.#CITY_SELECT.selectedIndex].text +
                                 ", № " + (me.#viddNumber != 0 ? me.#viddNumber : "");
+                            me.#CurrentTEXT = me.#EDIT_STR(me.#INPUT_FIELD.value);
                         }
+
+                        me.#SET_VIDD(me.#CITY_SELECT.value, me.#viddNumber);
                     }
+                } else if (removeWord(findSTR) != findSTR) {
+                    me.#FINDCITIES(removeWord(findSTR));
                 }
             },
             async: true
-        }, me);
+        });
     }
 
     #ExcludeEmptyWarehouse(inpArr) {
@@ -384,21 +489,6 @@ class NovaPay {
 
         this.#_WAREHOUSE_FINDER.GET_WAREHOUSES(_CityRef, number);
 
-    }
-
-    #getNumberByString(text) {
-        let out = ""; let started = false;
-
-        for (let i = text.length - 1; i >= 0; i--) {
-            if (IsNumeric(text[i])) {
-                started = true;
-                out = text[i] + out.toString();
-            } else if (started) {
-                break;
-            }
-        }
-
-        return out != "" ? out * 1: 0;
     }
 
     #TRANS_LITER(word = '') {
@@ -488,33 +578,39 @@ class NovaPay {
 
 class WAREHOUSE_FINDER {
     #TYPES = [];
-    #CALLBACK;
-    #BUFFER = [];
+    #WAREHOUSE_SELECTOR;
     #TOKEN = "";
+    #REF = "";
+    #CUR_NUMBER = 0;
 
-    constructor(token, typesArr, callback) {
+    constructor(token, typesArr, selector) {
         this.#TYPES = typesArr;
-        this.#CALLBACK = callback;
+        this.#WAREHOUSE_SELECTOR = selector;
         this.#TOKEN = token;
     }
 
     GET_WAREHOUSES(CITY_REF, NUMBER = 0) {
-        if (CITY_REF == undefined || CITY_REF == "") { me.#CALLBACK("", 0); return; }
+        if (CITY_REF == undefined || CITY_REF == "") { this.#REF = ""; console.log("ERR"); return; }
+
+        console.log("FIND NUMBER: " + NUMBER);
+
+        if (CITY_REF == this.#REF && NUMBER != this.#CUR_NUMBER) {
+            this.#SELECT_NUMBER(NUMBER);
+            return;
+        }
+
+        this.#REF = CITY_REF;
+        this.#CUR_NUMBER = NUMBER;
+
         let out = '';
         let counter = 0;
-        let MoreThenOne = false;
+        let APPLY = false;
         let param;
         let me = this;
 
-        if (NUMBER != 0) {
-            param = {
-                "SettlementRef": CITY_REF,
-                "TypeOfWarehouseRef": '',
-                "WarehouseId": NUMBER
-            };
-        } else {
-            param = { "SettlementRef": CITY_REF, "TypeOfWarehouseRef": '' };
-        }
+        //console.log("ПОШУК ВІДДІЛУ № " + (NUMBER != 0 ? NUMBER:"-"));
+
+        param = { "SettlementRef": CITY_REF, "TypeOfWarehouseRef": '' };
 
         this.#TYPES.forEach((type) => {
 
@@ -534,41 +630,50 @@ class WAREHOUSE_FINDER {
                     'Content-Type': 'application/json'
                 },
                 success: function (data) {
-                    //console.log("FIND: " + type);
-
-                    if (data.data.length == 0) return;
+                    if (data.data.length > 0) APPLY = true;
 
                     data.data.forEach((d) => {
                         out += "<option value='" + d.Number + "'>" + d.Description + "</option>\n";
                         counter++;
                     });
-
-                    console.log(counter);
-
-                    if (!MoreThenOne && counter != 1) {
-                        MoreThenOne = true;
-                        out = "<option disabled selected />оберіть відділення (" + counter + ")...\n" + out;
-                    }
-
-                    me.#BUFFER.push(counter);
-
-                    me.#CHECK_BUFFER(out, NUMBER);
                 },
                 async: false
-            }, me);
+            });
         });
-    }
 
-    #CHECK_BUFFER(ANS, N) {
-        if (this.#BUFFER.length == this.#TYPES.length) {
-            if (N != 0 && this.#BUFFER.every((b) => { return b == 0; })) {
-                this.#BUFFER = [];
-                this.GET_WAREHOUSES(CITY_REF);
-            } else {
-                this.#CALLBACK(ANS, N);
-            }
+        console.log("FINDED WAREH: " + counter);
 
-            this.#BUFFER = [];
+        if (counter > 1) {
+            out = "<option disabled selected value='0' />оберіть відділення (" + counter + ")...\n" + out;
+        }
+
+        if (!APPLY && this.#CUR_NUMBER != 0) {
+            this.GET_WAREHOUSES(this.#REF);
+        } else {
+            this.#WAREHOUSE_SELECTOR.innerHTML = out;
+            this.#SELECT_NUMBER(NUMBER);
         }
     }
+
+    #SELECT_NUMBER(number) {
+
+        let el = $(this.#WAREHOUSE_SELECTOR);
+        let finded = false;
+
+        $.each(el[0], (ind, op) => {
+            if (op.value == number) { finded = true; return; }
+        });
+
+        let setNum = function (me, isFinded) {
+            if (isFinded) {
+                me.#WAREHOUSE_SELECTOR.value = number;
+            }
+            else {
+                me.#WAREHOUSE_SELECTOR.value = 0;
+            }
+        }
+
+        setTimeout(setNum, 200, this, finded);
+    }
+
 }
