@@ -500,6 +500,7 @@ class ZDATA2{
      public $LOADED = false;
      public $CLOSED = false;
      public $TYPE = ZType::NONE;
+     public $NUMBER_LABLE = "sholom_num";
      public $massangers = [
         '',
         'Телеграм',
@@ -533,9 +534,11 @@ class ZDATA2{
 
             if ($this->INFO['sholom_num'] !== null){
                 $this->INFO['service_number'] = $this->INFO['sholom_num'];
+                $this->NUMBER_LABLE = "sholom_num";
                 $this->TYPE = ZType::DEFF;
             }else{
                 $this->INFO['service_number'] = $this->INFO['sold_number'];
+                $this->NUMBER_LABLE = "sold_number";
                 $this->TYPE = ZType::SOLD;
             }
 
@@ -1018,39 +1021,6 @@ class HTEL {
         return $out;
     }
 
-}
-
-class MyDialog
-{
-    private string $LABLE;
-    private array $BUTTONS;
-    private string $BODY;
-
-    function __construct(HTEL $body = null, array $butt = ['OK'=>true], string $lbl = 'ШоломProMax')
-    {
-        if (is_null($body))
-            $body = new HTEL();
-        $this->LABLE = $lbl;
-        $this->BUTTONS = $butt;
-        $this->BODY = $body;
-
-        $this->BODY = str_replace(PHP_EOL, '', $this->BODY);
-        $this->BODY = str_replace(' ', '', $this->BODY);
-        $this->BODY = str_replace("\t", '', $this->BODY);
-    }
-
-    function Show():string
-    {
-        //$data = '&dialog_body=' . $this->BODY . '';
-        //$data .= '&dialog_buttons=' . json_encode($this->BUTTONS);
-        //$data .= '&dialog_lable=' . $this->LABLE;
-
-        $_GET['dialog_body'] = $this->BODY;
-        $_GET['dialog_buttons'] = $this->BUTTONS;
-        $_GET['dialog_lable'] = $this->LABLE;
-
-        return include 'blok/dialog.php';
-    }
 }
 
 function _requestSend(array $arr): string

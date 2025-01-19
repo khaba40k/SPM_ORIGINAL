@@ -12,7 +12,7 @@ $conn = new SQLconn();
 
 //$_GET['ID'] = 1709;
 
-$INPUT = new ZDATA2(isset($_GET['ID']) ? $_GET['ID']:-1, ZType::DEFF);
+$INPUT = new ZDATA2(isset($_GET['ID']) ? $_GET['ID'] : -1, ZType::DEFF);
 
 #endregion
 
@@ -23,43 +23,43 @@ $termin = $INPUT->GET('date_max', $termin);
 
 $fsHead = new HTEL('fieldset !=headFS', new HTEL('legend/ДАНІ ЗАМОВЛЕННЯ:'));
 
-if ($INPUT->LOADED)
-$fsHead(new HTEL('div', [
-    "service_number",
-    "number",
-    "Номер заявки",
-    $INPUT->GET('service_number'),
-    new HTEL('label for=[0]/[2]'),
-    new HTEL('input *=[1] !=[0] ?=[0] #=[3] min=1 [r]')
-]));
-
-if($INPUT->TYPE == ZType::DEFF || $INPUT->TYPE == ZType::SOLD)
-$fsHead(new HTEL('div', [ 
-    "date_in",
-    "datetime-local",
-    "Створено",
-    new HTEL('label for=[0]/[2]'),
-    new HTEL('input *=[1] !=[0] ?=[0] min=[2] #=[2]', [2=> $dateNow])
-]));
+if ($INPUT->LOADED && $INPUT->GET('service_number') != 0)
+    $fsHead(new HTEL('div', [
+        $INPUT->NUMBER_LABLE,
+        "number",
+        "Номер заявки",
+        $INPUT->GET('service_number'),
+        new HTEL('label for=[0]/[2]'),
+        new HTEL('input *=[1] !=[0] ?=[0] #=[3] min=1 [r]')
+    ]));
 
 if ($INPUT->TYPE == ZType::DEFF || $INPUT->TYPE == ZType::SOLD)
-$fsHead(new HTEL('div', [
-    "date_max",
-    "date",
-    "Термін",
-    new HTEL('label for=[0]/[2]'),
-    new HTEL('input *=[1] !=[0] ?=[0] #=[2]', [2=> $termin])
-]));
+    $fsHead(new HTEL('div', [
+        "date_in",
+        "datetime-local",
+        "Створено",
+        new HTEL('label for=[0]/[2]'),
+        new HTEL('input *=[1] !=[0] ?=[0] min=[2] #=[2]', [2 => $dateNow])
+    ]));
+
+if ($INPUT->TYPE == ZType::DEFF || $INPUT->TYPE == ZType::SOLD)
+    $fsHead(new HTEL('div', [
+        "date_max",
+        "date",
+        "Термін",
+        new HTEL('label for=[0]/[2]'),
+        new HTEL('input *=[1] !=[0] ?=[0] #=[2]', [2 => $termin])
+    ]));
 
 if ($INPUT->CLOSED)
-$fsHead(new HTEL('div', [
-    "date_out",
-    "datetime-local",
-    "Відправлено",
-    $INPUT->GET('date_out'),
-    new HTEL('label for=[0]/[2]'),
-    new HTEL('input *=[1] !=[0] ?=[0] #=[3]')
-]));
+    $fsHead(new HTEL('div', [
+        "date_out",
+        "datetime-local",
+        "Відправлено",
+        $INPUT->GET('date_out'),
+        new HTEL('label for=[0]/[2]'),
+        new HTEL('input *=[1] !=[0] ?=[0] #=[3]')
+    ]));
 
 $fsHead(new HTEL('div', [
     "phone",
@@ -94,24 +94,24 @@ $fsHead(new HTEL('div', [
 ]));
 
 if ($INPUT->TYPE == ZType::DEFF || $INPUT->TYPE == ZType::SOLD)
-$fsHead(new HTEL('div', [
-    "TTN_IN",
-    "text",
-    "ТТН (вхідна)",
-    $INPUT->GET('TTN_IN'),
-    new HTEL('label for=[0]/[2]'),
-    new HTEL('input *=[1] !=[0] ?=[0] #=[3]')
-]));
+    $fsHead(new HTEL('div', [
+        "TTN_IN",
+        "text",
+        "ТТН (вхідна)",
+        $INPUT->GET('TTN_IN'),
+        new HTEL('label for=[0]/[2]'),
+        new HTEL('input *=[1] !=[0] ?=[0] #=[3]')
+    ]));
 
 if ($INPUT->CLOSED)
-$fsHead(new HTEL('div', [
-    "TTN_OUT",
-    "text",
-    "ТТН (вихідна)",
-    $INPUT->GET('TTN_OUT'),
-    new HTEL('label for=[0]/[2]'),
-    new HTEL('input *=[1] !=[0] ?=[0] #=[3]')
-]));
+    $fsHead(new HTEL('div', [
+        "TTN_OUT",
+        "text",
+        "ТТН (вихідна)",
+        $INPUT->GET('TTN_OUT'),
+        new HTEL('label for=[0]/[2]'),
+        new HTEL('input *=[1] !=[0] ?=[0] #=[3]')
+    ]));
 
 $fsHead(new HTEL('div', [
     "discount",
@@ -122,7 +122,7 @@ $fsHead(new HTEL('div', [
     new HTEL('input *=[1] !=[0] ?=[0] min=5 max=5 #=[3]')
 ]));
 
-if ($INPUT->TYPE == ZType::DEFF || $INPUT->TYPE == ZType::SOLD){
+if ($INPUT->TYPE == ZType::DEFF || $INPUT->TYPE == ZType::SOLD) {
     $messOpt = [];
 
     foreach ($INPUT->massangers as $ind => $m) {
@@ -150,10 +150,10 @@ $result = $conn->SELECT('price_list', 'cost', 'WHERE service_id = 21 AND type_id
 $terminovoPrice = $result[0]['cost'];
 $terminovoCheck = '';
 
-if (!empty($INPUT->GET_SERVICE(21))){
-      $temp = $INPUT->GET_SERVICE(21);
-      $terminovoPrice = $temp['costs'];
-      $terminovoCheck = 'checked';
+if (!empty($INPUT->GET_SERVICE(21))) {
+    $temp = $INPUT->GET_SERVICE(21);
+    $terminovoPrice = $temp['costs'];
+    $terminovoCheck = 'checked';
 }
 
 $fsHead(new HTEL('div', [
@@ -167,14 +167,14 @@ $fsHead(new HTEL('div', [
 ]));
 
 if (!$INPUT->CLOSED)
-$fsHead(new HTEL('div', [
-    "callback",
-    "checkbox",
-    "Не телефонуйте мені",
-    $INPUT->GET('callback'),
-    new HTEL('label for=[0]/[2]'),
-    new HTEL('input *=[1] !=[0] ?=[0] [3]')
-]));
+    $fsHead(new HTEL('div', [
+        "callback",
+        "checkbox",
+        "Не телефонуйте мені",
+        $INPUT->GET('callback'),
+        new HTEL('label for=[0]/[2]'),
+        new HTEL('input *=[1] !=[0] ?=[0] [3]')
+    ]));
 
 $container($fsHead);
 
@@ -188,7 +188,7 @@ $container($fsHead);
 
 $atr = ZType::DEFF;
 
-#region ПРОРИСОВКА ТІЛА ФОРМИ 
+#region ПРОРИСОВКА ТІЛА ФОРМИ
 
 $fsBody = new HTEL('fieldset !=bodyFS', new HTEL('legend/[0]', "КОМПЛЕКТУЮЧІ / ПОСЛУГИ:"));
 
@@ -210,7 +210,7 @@ $COLORS = array();
 
 $color_read = $conn->SELECT('colors', 'ID, color, css_name', 'ORDER BY ID');
 
-foreach($color_read as $c){
+foreach ($color_read as $c) {
     $COLORS[$c['ID']] = ['NAME' => $c['color'], 'COLOR' => $c['css_name']];
 }
 
@@ -245,8 +245,8 @@ foreach ($result as $row) {
 
             $cost = 0;
 
-            foreach($cost_read as $cst){
-                if ($cst['type_id'] == $t['type_ID']){
+            foreach ($cost_read as $cst) {
+                if ($cst['type_id'] == $t['type_ID']) {
                     $cost = $cst['cost'];
                 }
             }
@@ -265,8 +265,8 @@ $workDIV = new HTEL('div !=work_body');
 
 $readOnlyPriceAtr = $INPUT->TYPE == ZType::DEFF_A ? 'readonly' : 'required';
 
-foreach($SERVICES as $s){
-    $POSL = $s['HAS_COLOR'] == 0 ? 'disabled':'';
+foreach ($SERVICES as $s) {
+    $POSL = $s['HAS_COLOR'] == 0 ? 'disabled' : '';
     $VARIANT = $s['HAS_COLOR'] == 1 ? 'checked' : '';
     $workDIV(new HTEL('div .=oneservice servID=[0]', [
         $s['ID'],
@@ -279,7 +279,7 @@ foreach($SERVICES as $s){
         new HTEL('label for=[0]_yes1/своє'),
         new HTEL('input *=radio !=[0]_yes ?=service_ID[[0]] servID=[0] #=1 price=[2]'),
         new HTEL('label for=[0]_yes/так'),
-        new HTEL('input *=radio !=[0]_no ?=service_ID[[0]] servID=[0] #=0 [r] [1] price=[2]', [1=> $VARIANT]),
+        new HTEL('input *=radio !=[0]_no ?=service_ID[[0]] servID=[0] #=0 [r] [1] price=[2]', [1 => $VARIANT]),
         new HTEL('label for=[0]_no/ні')
     ]));
 }
@@ -290,15 +290,57 @@ $container($fsBody);
 
 #endregion
 
-$conn->close();
+#region ПРОРИСОВКА НИЗА
 
-$container(new HTEL('button *=submit/OK'));
+session_start();
+
+$bottom = new HTEL("div !=bott");
+
+if (!isset($_SESSION['logged'])) {
+    $_SESSION['logged'] = null;
+} else {
+    $curID = $conn->SELECT("users", "ID", @"WHERE `login` = '{$_SESSION['logged']}'")[0]['ID'];
+
+    $redaktors = $conn->SELECT("users", "login", @"WHERE ID >= {$curID} ORDER BY ID");
+
+    $options = [];
+
+    $curSelect = "";
+
+    $redaktor = !empty($INPUT->GET("redaktor")) ? $INPUT->GET("redaktor") : $_SESSION['logged'];
+
+    foreach ($redaktors as $r) {
+        $curSelect = $r["login"] == $redaktor ? "selected" : "";
+
+        $options[] = new HTEL(@"option #=[0] {$curSelect}/[0]", $r['login']);
+    }
+
+    $selectAcc = new HTEL("select !=red ?=redaktor", $options);
+
+    $access = new HTEL("div !=acc", [
+        new HTEL("label for=red/ЗАКРІПИТИ:"),
+        $selectAcc
+    ]);
+
+    $bottom($access);
+
+    $bottom(new HTEL("input ?=worker $=працівник #=[0]", $INPUT->GET("worker")));
+}
+
+$butt = new HTEL("button *=submit/ЗБЕРЕГТИ");
+
+$bottom($butt);
+
+$container($bottom);
+
+#endregion
+
+$conn->close();
 
 echo $container;
 echo new HTEL('div !=ans');
+echo new HTEL("div !=SELECT_INFO");
 
-//var_dump($INPUT->ToArray());
-//var_dump($INPUT->GET_SERVICE(20));
 ?>
 
 <script>
@@ -309,11 +351,28 @@ echo new HTEL('div !=ans');
 
     var INPUTSERVICES = <?= json_encode($INPUT->GET_SERVICES()) ?>
 
-    //console.log(INPUTSERVICES);
+        //NOVA POSHTA
+
+    var NP_INP = document.getElementById('reqv');
+    var NP_DList = document.getElementById('list_town');
+    var NP_CSelect = document.getElementById('NP_town');
+    var NP_WSelect = document.getElementById('NP_vidd');
+    var Loaded = <?= json_encode($INPUT->LOADED); ?>;
+
+    var NP = new NovaPay(
+        '4e4de3b4d068a37e30e0da387a049415',
+        NP_INP,
+        NP_DList,
+        NP_CSelect,
+        NP_WSelect,
+        Loaded
+    );
+
+</script>
+
+<script>
 
     var LAST_SELECTED_COLOR = -1;
-
-    //console.log(SERVICES);
 
     INPUT_SET();
 
@@ -425,7 +484,7 @@ echo new HTEL('div !=ans');
                                      t.TYPE + "</label>";
                             } else {
                                 hasTypes = false;
-                            
+
                                 innerOUT += "<input id='type_" + servID +
                                     "_" + i + "' type='radio' value='" + i + "' name='type[" +
                                     servID + "]' checked='' /><label for='type_" + servID + "_" + i + "'>" +
@@ -532,7 +591,7 @@ echo new HTEL('div !=ans');
             IsYes = $.find(':input[type=radio]:checked', srv);
 
             if (IsYes.length > 0) {
-                
+
                 Cost = $.find(':input[type=number]', srv)[0].value * 1;
 
                 if (IsYes[0].value != 0) {
@@ -549,91 +608,129 @@ echo new HTEL('div !=ans');
         });
     });
 
-    //NOVA POSHTA
+    $('#priceLabel').mouseenter(() => {
+        SHOW_CHECK();
+    });
 
-    var NP_INP = document.getElementById('reqv');
-    var NP_DList = document.getElementById('list_town');
-    var NP_CSelect = document.getElementById('NP_town');
-    var NP_WSelect = document.getElementById('NP_vidd');
-    var Loaded = <?= json_encode($INPUT->LOADED) ?>;
+    //mouseleave
 
-    var NP = new NovaPay(
-        '4e4de3b4d068a37e30e0da387a049415',
-        NP_INP,
-        NP_DList,
-        NP_CSelect,
-        NP_WSelect,
-        Loaded
-    );
+    $('#priceLabel').mouseleave(() => {
+        $("#SELECT_INFO").css("visibility", "hidden");
+    });
+
+    var ID_NAME_ARR = [];
+
+    SET_ID_NAME_ARR();
+
+    function SET_ID_NAME_ARR() {
+        $.each(SERVICES, (ind, serv) => {
+            ID_NAME_ARR.push({ name: "SERVICE[" + serv.ID + "]", value: serv.NAME });
+            let types = [];
+
+            $.each(serv.TYPES, (i, t) => {
+                ID_NAME_ARR.push({ name: "TYPE_NAME[" + serv.ID + "][" + i + "]", value: t.TYPE });
+            });
+        });
+    }
+
+    function SHOW_CHECK() {
+
+        $.get("show_check.php", ID_NAME_ARR.concat($('#bodyFS').serializeArray()), (ans) => {
+            $("#SELECT_INFO").html(ans);
+        });
+
+        $("#SELECT_INFO").css("visibility", "visible");
+    }
 
 </script>
 
 <style>
 
-    fieldset{
-         margin-top: 20px;
-         width: 100%;
-         padding: 20px;
+    fieldset, #bott {
+        margin: 20px 1% 0 1%;
+        width: 98%;
+        max-width: 98%;
+        padding: 20px;
     }
 
-        #headFS input[type=datetime-local], #headFS input[type=date] {
-            width: auto;
-        }
+    #headFS input[type=datetime-local], #headFS input[type=date] {
+        width: auto;
+    }
 
-        #headFS > div {
-            position: relative;
-            width: 100%;
-            margin: 3px 0;
-            padding: 3px 0;
-            display: grid;
-            grid-template-columns: 30% 70%;
-        }
+    #headFS > div {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        margin: 3px 0;
+        padding: 3px 0;
+        display: grid;
+        grid-template-columns: 30% 70%;
+    }
 
-        #headFS input[type=checkbox]{
-              width: 25px;
-              height: 25px;
-        }
+    #headFS input[type=checkbox] {
+        width: 25px;
+        height: 25px;
+    }
 
-        #headFS > div > div {
-            border: solid 2px black;
-            border-radius: 5px;
-            padding: 10px;
-        }
+    #headFS > div > div {
+        position: relative;
+        border: solid 2px black;
+        border-radius: 5px;
+        padding: 10px;
+        max-width: 100%;
+    }
 
         #headFS > div > div > * {
+            position: static;
             min-height: 25px;
+            width: 100%;
         }
 
-            #headFS > div > :last-child {
-                display: grid;
-                grid-template-columns: 100%;
-                grid-row-gap: 6px;
-            }
+    #headFS > div >:last-child {
+        display: grid;
+        grid-template-columns: 100%;
+        grid-row-gap: 6px;
+    }
 
-            #headFS textarea {
-                 min-height: 80px;
-                 resize: vertical;
-            }
+    #headFS textarea {
+        min-height: 80px;
+        resize: vertical;
+    }
 
-    #bodyFS{
+    #bodyFS {
         position: relative;
     }
 
-    #priceLabel{
-         position: sticky;
-         width: 140px;
-         font-size: 26px;
-         background-color: yellow;
-         border: solid 5px blue;
-         border-radius: 20px 0 0 0;
-         right: 10px;
-         top: 30px;
-         font-weight: bold;
-         font-style: italic;
-         color: #353535;
-         text-align: center;
-         z-index: 999;
-         margin-bottom: 5px;
+    #priceLabel {
+        position: sticky;
+        width: 140px;
+        font-size: 26px;
+        background-color: yellow;
+        border: solid 5px blue;
+        border-radius: 20px 0 0 0;
+        right: 10px;
+        top: 30px;
+        font-weight: bold;
+        font-style: italic;
+        color: #353535;
+        text-align: center;
+        z-index: 999;
+        margin-bottom: 5px;
+    }
+
+    #SELECT_INFO {
+        position: fixed;
+        display: grid;
+        grid-column-gap: 20px;
+        width: 80%;
+        left: 10%;
+        top: 100px;
+        background-color: bisque;
+        color: dimgray;
+        grid-template-columns: 45% 0 35% 0 10%;
+        padding: 1% 5%;
+        font-family: 'Lucida Console';
+        visibility: hidden;
     }
 
     @media screen and (max-width: 750px) {
@@ -641,7 +738,7 @@ echo new HTEL('div !=ans');
             font-size: 10px;
         }
     }
-    
+
     #bodyFS input[type=radio] {
         width: 1px;
         height: 1px;
@@ -659,9 +756,9 @@ echo new HTEL('div !=ans');
         padding-bottom: 5px;
     }
 
-    .oneservice :first-child{
-        word-wrap: break-word;
-    }
+        .oneservice:first-child {
+            word-wrap: break-word;
+        }
 
         .oneservice input[type=radio][id$="_no"]:checked + label {
             background-color: red;
@@ -692,11 +789,11 @@ echo new HTEL('div !=ans');
             cursor: default;
         }
 
-        .oneservice input[type=number]{
-             background: none;
-             text-align: right;
-             border: none;
-             color: blue;
+        .oneservice input[type=number] {
+            background: none;
+            text-align: right;
+            border: none;
+            color: blue;
         }
 
     .podmenu {
@@ -706,11 +803,11 @@ echo new HTEL('div !=ans');
         grid-column: 1 / 9;
     }
 
-    .podmenu > :first-child{
-        display: grid;
-        grid-template-columns: 0 100%;
-        row-gap: 2px;
-    }
+        .podmenu >:first-child {
+            display: grid;
+            grid-template-columns: 0 100%;
+            row-gap: 2px;
+        }
 
     .color_list {
         display: grid;
@@ -718,32 +815,25 @@ echo new HTEL('div !=ans');
         row-gap: 2px;
     }
 
+    #bott {
+        border: solid 5px green;
+        background-color: darksalmon;
+        border-radius: 15px;
+        display: inline-flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        #bott input, #bott select {
+            border: dotted 3px #b37474;
+            border-radius: 5px;
+            color: green;
+            font-weight: bold;
+            background-color: darkgray;
+        }
+
+        #bott input, #bott > div, #bott button {
+            max-width: 30%;
+        }
+
 </style>
-
-
-<!--<div class="oneservice">
-
-										<label for="15_yes">
-												Реставрація
-										</label>
-
-										<input class="price_input" name="cost[15]" type="number" min="0" required="" value="400">
-
-										<input type="radio" id="15_yes1" name="service_ID[15]" servid="15" value="2">
-
-										<label for="15_yes1">
-												своє
-										</label>
-
-										<input type="radio" id="15_yes" name="service_ID[15]" servid="15" value="1">
-
-										<label for="15_yes">
-												так
-										</label>
-
-										<input type="radio" id="15_no" name="service_ID[15]" servid="15" value="0" checked="">
-
-										<label for="15_no">
-												ні
-										</label>
-								</div>-->

@@ -226,6 +226,10 @@ class NovaPay {
         this.#CITY_SELECT = citySelect;
         this.#WAREHOUSE_SELECT = warehouseSelect;
 
+        if ([
+            this.#INPUT_FIELD, this.#DATA_LIST = dataList, this.#CITY_SELECT, this.#WAREHOUSE_SELECT
+        ].some((el) => { return el === null })) return;
+
         this.#INPUT_FIELD.addEventListener("input", (obj) => { this.#LOADED = false; this.#INPUT_EVENT(obj.target.value); });
         this.#CITY_SELECT.addEventListener("change", (obj) => {
             this.#CITY_CHANGE_EVENT(obj.target.options[obj.target.selectedIndex].text, obj.target.value)
@@ -349,38 +353,39 @@ class NovaPay {
         return true;
     }
 
+    TEST(temp) {
+        return this.#EDIT_STR(temp);
+    }
+
     #EDIT_STR(str) {
         let CityOblToStartPos = function (txt) {
-            let chars = ["обл.", "область", " обл"];
-            let indStart = 0;
-            let obl = ""; let cit = "";
+            let temp = [];
+            let obl = "";
+            let cit = "";
+            let rjn = "";
 
-            if (chars.some((ch) => { indStart = txt.indexOf(ch); txt = txt.replace(ch, ""); return indStart >= 0 })) {
+            temp = txt.match(/(^|\s)+(м|с|смт|с.м.т|місто|село|селище)[.\s]+(\S+)/);
 
-                let prevSpase = txt.lastIndexOf(" ", indStart - 2);
-
-                if (prevSpase > 0) {
-                    obl = txt.substring(prevSpase, indStart);
-                }
+            if (temp != null) {
+                cit = temp.length > 3 ? temp[3] : temp[0];
+                txt = txt.replace(temp[0], '');
             }
 
-            chars = ["м.", " м ", "місто ", "с.", "смт", "с.м.т.", "село ", "село.", "селище"];
-            indStart = 0;
+            temp = txt.match(/([\S]+)[\s]+обл($|[\s]|[\S]+)/);
 
-            if (chars.some((ch) => { indStart = txt.indexOf(ch); txt = txt.replace(ch, ""); return indStart >= 0 })) {
-                let nextSpace = txt.indexOf(" ", indStart + 1);
-
-                if (nextSpace > 0) {
-                    cit = txt.substring(indStart, nextSpace);
-                } else {
-                    cit = txt.substring(indStart);
-                }
-
+            if (temp != null) {
+                obl = temp.length > 1 ? temp[1] : temp[0];
+                txt = txt.replace(temp[0], '');
             }
 
-            txt = txt.replace(obl, "").replace(cit, "");
+            temp = txt.match(/([\S]+)[\s]+(р\-н|рай)($|[\s]|[\S]+)/);
 
-            return cit + obl + txt;
+            if (temp != null) {
+                rjn = temp.length > 1 ? temp[1] : temp[0];
+                txt = txt.replace(temp[0], '');
+            }
+
+            return cit + " " + obl + " " + rjn + " " + txt;
         }
 
         str = CityOblToStartPos(str);
