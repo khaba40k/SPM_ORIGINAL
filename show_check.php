@@ -1,36 +1,33 @@
 <?php
+$SERVICES = $_GET["SERVICES"];
 
-$serviceNames = $_GET["SERVICE"] ?? [];
-$type_names = $_GET["TYPE_NAME"] ?? [];
-$selected_types = $_GET["type"] ?? [];
-$costs = $_GET["cost"] ?? [];
-$faktIDS = $_GET["service_ID"] ?? [];
-//color ?????
+$COLORS = $_GET["COLOR"];
 
-$summ_out = 0;
-$service_type_name = "";
-$counter = 0;
-
-if (isset($costs[21])){
-    $faktIDS[21] = 1;
-    $serviceNames[21] = "Терміново";
+if (!is_array($SERVICES) || count($SERVICES) == 0){
+    echo "<span style='grid-column: 1 / 4;text-align: center;'>НІЧОГО НЕ ОБРАНО</span>";
+    exit;
 }
+
+$counter = 1;
+$sum = 0;
 
 echo "<span style='grid-column: 1 / 4;text-align: center;padding-bottom: 20px;'>ПОПЕРЕДНІЙ ПЕРЕГЛЯД</span>";
 echo "<span></span><hr><hr>";
 
-foreach($faktIDS as $id=>$apply){
-     if ($apply > 0){
-        $service_type_name = $apply == 1 ? $type_names[$id][($selected_types[$id] ?? 1)]:"установка";
-        $service_type_name = $serviceNames[$id] . ($service_type_name != "" ? " (" . $service_type_name . ")" : "");
-        $counter++;
-        echo @"<span>{$counter}.</span><span>{$service_type_name}</span><span style='text-align:right;'>{$costs[$id]}</span>";
-        echo "<span></span><hr><hr>";
-        $summ_out += $costs[$id];
-     }
+$color = "";
+
+foreach($SERVICES as $serv){
+
+    $color = key($COLORS[$serv["COLOR"]["ID"]]);
+
+    echo 
+    @"<span style='color:{$color}'>" . $counter++ . ".</span>" .
+    @"<span style='color:{$color}'>" . $serv["NAME"] . (!empty($serv["TYPE"]["NAME"]) ? " (" . $serv["TYPE"]["NAME"] . ")" : "") . "</span>" . 
+    @"<span style='text-align: right;color:{$color}'>" . $serv["COST"] . "</span>";
+    echo "<span></span><hr><hr>";
+    $sum += $serv["COST"];
 }
 
-if ($summ_out > 0){
-    echo @"<span></span><span></span><span style='text-align:right; color: black; font-weight: bold;'>{$summ_out}</span>";
-}
+echo @"<span></span><span></span><span style='color: white; text-align: right; font-weight: bold; background-color: gray'>{$sum}</span>";
+
 ?>

@@ -313,7 +313,7 @@ class NovaPay {
 
         let temp_num = getNumberByString(text);
 
-        console.clear();
+        //console.clear();
 
         text = me.#TRANS_LITER(text.toLowerCase().trim());
 
@@ -327,10 +327,10 @@ class NovaPay {
         text = me.#EDIT_STR(text);
 
         if (me.#CurrentTEXT == text && me.#viddNumber == temp_num && me.#FINDED_ARRAY.length > 0) {
-            console.log("ТЕКСТ НЕ ЗМІНИВСЯ; НОМЕР НЕ ЗМІНИВСЯ; ДАНІ ПІДГРУЖЕНО");
+            //console.log("ТЕКСТ НЕ ЗМІНИВСЯ; НОМЕР НЕ ЗМІНИВСЯ; ДАНІ ПІДГРУЖЕНО");
             return true;
         } else if (me.#CurrentTEXT == text) {
-            console.log("ТЕКСТ НЕ ЗМІНИВСЯ");
+            //console.log("ТЕКСТ НЕ ЗМІНИВСЯ");
 
             me.#viddNumber = temp_num;
 
@@ -339,7 +339,7 @@ class NovaPay {
             return true;
         }
 
-        console.log("ТЕКСТ ЗМІНИВСЯ");
+        //console.log("ТЕКСТ ЗМІНИВСЯ");
 
         me.#viddNumber = temp_num;
 
@@ -405,7 +405,7 @@ class NovaPay {
     #FINDCITIES(findSTR) {
         let me = this;
 
-        console.log("FIND STRING: [" + findSTR + "]");
+        //console.log("FIND STRING: [" + findSTR + "]");
 
         let removeWord = function (input) {
             let arr = input.split(" ");
@@ -443,7 +443,7 @@ class NovaPay {
             success: function (texts) {
                 me.#FINDED_ARRAY = me.#ExcludeEmptyWarehouse(texts.data[0].Addresses);
 
-                console.log("FINDED CITYES: " + me.#FINDED_ARRAY.length);
+                //console.log("FINDED CITYES: " + me.#FINDED_ARRAY.length);
 
                 if (me.#FINDED_ARRAY.length > 0) {
 
@@ -596,7 +596,7 @@ class WAREHOUSE_FINDER {
     GET_WAREHOUSES(CITY_REF, NUMBER = 0) {
         if (CITY_REF == undefined || CITY_REF == "") { this.#REF = ""; console.log("ERR"); return; }
 
-        console.log("FIND NUMBER: " + NUMBER);
+        //console.log("FIND NUMBER: " + NUMBER);
 
         if (CITY_REF == this.#REF && NUMBER != this.#CUR_NUMBER) {
             this.#SELECT_NUMBER(NUMBER);
@@ -645,7 +645,7 @@ class WAREHOUSE_FINDER {
             });
         });
 
-        console.log("FINDED WAREH: " + counter);
+        //console.log("FINDED WAREH: " + counter);
 
         if (counter > 1) {
             out = "<option disabled selected value='0' />оберіть відділення (" + counter + ")...\n" + out;
@@ -677,7 +677,7 @@ class WAREHOUSE_FINDER {
             }
         }
 
-        setTimeout(setNum, 200, this, finded);
+        setTimeout(setNum, 250, this, finded);
     }
 
 }
