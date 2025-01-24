@@ -12,7 +12,7 @@ $conn = new SQLconn();
 
 //$_GET['ID'] = 1709;
 
-$INPUT = new ZDATA2(isset($_GET['ID']) ? $_GET['ID'] : -1, ZType::DEFF);
+$INPUT = new ZDATA2($_GET['ID'] ?? 0, ZType::DEFF);
 
 #endregion
 
@@ -39,7 +39,7 @@ if ($INPUT->TYPE == ZType::DEFF || $INPUT->TYPE == ZType::SOLD)
         "datetime-local",
         "Створено",
         new HTEL('label for=[0]/[2]'),
-        new HTEL('input *=[1] !=[0] ?=[0] min=[2] #=[2]', [2 => $dateNow])
+        new HTEL('input *=[1] !=[0] ?=[0] min=[2] #=[2] [r]', [2 => $dateNow])
     ]));
 
 if ($INPUT->TYPE == ZType::DEFF || $INPUT->TYPE == ZType::SOLD)
@@ -48,7 +48,7 @@ if ($INPUT->TYPE == ZType::DEFF || $INPUT->TYPE == ZType::SOLD)
         "date",
         "Термін",
         new HTEL('label for=[0]/[2]'),
-        new HTEL('input *=[1] !=[0] ?=[0] #=[2]', [2 => $termin])
+        new HTEL('input *=[1] !=[0] ?=[0] #=[2] [r]', [2 => $termin])
     ]));
 
 if ($INPUT->CLOSED)
@@ -58,7 +58,7 @@ if ($INPUT->CLOSED)
         "Відправлено",
         $INPUT->GET('date_out'),
         new HTEL('label for=[0]/[2]'),
-        new HTEL('input *=[1] !=[0] ?=[0] #=[3]')
+        new HTEL('input *=[1] !=[0] ?=[0] #=[3] [r]')
     ]));
 
 $fsHead(new HTEL('div', [
@@ -67,7 +67,7 @@ $fsHead(new HTEL('div', [
     "Номер телефону",
     $INPUT->GET('phone'),
     new HTEL('label for=[0]/[2]'),
-    new HTEL('input *=[1] !=[0] ?=[0] #=[3]')
+    new HTEL('input *=[1] !=[0] ?=[0] #=[3] [r]')
 ]));
 
 $fsHead(new HTEL('div', [
@@ -76,7 +76,7 @@ $fsHead(new HTEL('div', [
     "Прізвище, ім'я",
     $INPUT->GET('client_name'),
     new HTEL('label for=[0]/[2]'),
-    new HTEL('input *=[1] !=[0] ?=[0] #=[3]')
+    new HTEL('input *=[1] !=[0] ?=[0] #=[3] [r]')
 ]));
 
 $fsHead(new HTEL('div', [
@@ -86,7 +86,7 @@ $fsHead(new HTEL('div', [
     $INPUT->GET('reqv'),
     new HTEL('label for=[0]/[2]'),
     new HTEL('div', [
-        new HTEL('input *=[1] !=[0] ?=[0] #=[3] list=list_town'),
+        new HTEL('input *=[1] !=[0] ?=[0] #=[3] list=list_town [r]'),
         new HTEL('select !=NP_town'),
         new HTEL('datalist !=list_town'),
         new HTEL('select !=NP_vidd')
@@ -315,19 +315,19 @@ if (!isset($_SESSION['logged'])) {
         $options[] = new HTEL(@"option #=[0] {$curSelect}/[0]", $r['login']);
     }
 
-    $selectAcc = new HTEL("select !=red ?=redaktor", $options);
+    $selectAcc = new HTEL("select !=redaktor ?=redaktor", $options);
 
     $access = new HTEL("div !=acc", [
-        new HTEL("label for=red/ЗАКРІПИТИ:"),
+        new HTEL("label for=redaktor/ЗАКРІПИТИ:"),
         $selectAcc
     ]);
 
     $bottom($access);
 
-    $bottom(new HTEL("input ?=worker $=працівник #=[0]", $INPUT->GET("worker")));
+    $bottom(new HTEL("input !=worker ?=worker $=працівник #=[0]", $INPUT->GET("worker")));
 }
 
-$butt = new HTEL("button *=submit/ЗБЕРЕГТИ");
+$butt = new HTEL("button !=submBut *=submit/ЗБЕРЕГТИ");
 
 $bottom($butt);
 
@@ -357,7 +357,8 @@ echo new HTEL("div !=SELECT_INFO");
     var NP_DList = document.getElementById('list_town');
     var NP_CSelect = document.getElementById('NP_town');
     var NP_WSelect = document.getElementById('NP_vidd');
-    var Loaded = <?= json_encode($INPUT->LOADED); ?>;
+    var Loaded = <?= json_encode($INPUT->LOADED) ?>;
+    var LoadedID = <?= $INPUT->ID ?>;
 
     var NP = new NovaPay(
         '4e4de3b4d068a37e30e0da387a049415',
@@ -602,30 +603,48 @@ echo new HTEL("div !=SELECT_INFO");
         $('#priceLabel').val(out + " грн.");
     }
 
-    $('#container').submit(function () {
-        $.get('blok/z_create/RecZ.php', $('#container').serializeArray(), (succes) => {
+    var ID_NAME_ARR = [];
+
+    SET_ID_NAME_ARR();
+
+    function SERIALIZE(onlyServices = false) {
+
+        let OUT = ID_NAME_ARR.concat($('#bodyFS').serializeArray());
+
+        if ($('#terminovo').prop('checked')) {
+            OUT.push({ name: "service_ID[21]", value: 1 });
+            OUT.push({ name: "cost[21]", value: $('#terminovo').val() });
+        }
+
+        if (!onlyServices) {
+            OUT = OUT.concat($('#headFS').serializeArray());
+            OUT = OUT.concat({ name: "ID", value: LoadedID }, { name: "worker", value: $('#worker').val() }, { name: "redaktor", value: $('#redaktor').val() });
+        }
+
+        return OUT;
+    }
+
+    $('#container').submit(this.SUBM);
+
+    function SUBM() {
+        $.get('blok/z_create/RecZ.php', SERIALIZE(), (succes) => {
             $('#ans').html(succes);
         });
-    });
+    }
 
-    $('#priceLabel').mouseenter(() => {
+    $('#priceLabel, #submBut').mouseenter(() => {
         SHOW_CHECK();
     });
 
     //mouseleave
 
-    $('#priceLabel').mouseleave(() => {
+    $('#priceLabel, #submBut').mouseleave(() => {
         $("#SELECT_INFO").css("visibility", "hidden");
     });
-
-    var ID_NAME_ARR = [];
-
-    SET_ID_NAME_ARR();
 
     function SET_ID_NAME_ARR() {
         $.each(SERVICES, (ind, serv) => {
             ID_NAME_ARR.push({ name: "SERVICE[" + serv.ID + "]", value: serv.NAME });
-            let types = [];
 
             $.each(serv.TYPES, (i, t) => {
                 ID_NAME_ARR.push({ name: "TYPE_NAME[" + serv.ID + "][" + i + "]", value: t.TYPE });
@@ -635,7 +654,7 @@ echo new HTEL("div !=SELECT_INFO");
 
     function SHOW_CHECK() {
 
-        $.get("show_check.php", ID_NAME_ARR.concat($('#bodyFS').serializeArray()), (ans) => {
+        $.get("show_check.php", this.SERIALIZE(true), (ans) => {
             $("#SELECT_INFO").html(ans);
         });
 
@@ -714,32 +733,38 @@ echo new HTEL("div !=SELECT_INFO");
         font-style: italic;
         color: #353535;
         text-align: center;
-        z-index: 999;
+        z-index: 998;
         margin-bottom: 5px;
     }
 
     #SELECT_INFO {
         position: fixed;
-        display: grid;
-        grid-column-gap: 20px;
-        width: 80%;
-        left: 10%;
-        top: 100px;
-        background-color: bisque;
-        color: dimgray;
-        grid-template-columns: 45% 0 35% 0 10%;
-        padding: 1% 5%;
-        font-family: 'Lucida Console';
+        display: inline-grid;
+        z-index: 999;
+        grid-column-gap: 10px;
+        width: fit-content;
+        right: 30px;
+        bottom: 100px;
+        background-color: white;
+        color: #141414;
+        grid-template-columns: auto auto auto;
+        padding: 2% 1%;
+        font-family: cons;
         visibility: hidden;
+        box-shadow: -10px -10px 5px rgb(52, 52, 52, 0.79);
     }
 
-    @media screen and (max-width: 750px) {
-        #bodyFS > div * {
-            font-size: 10px;
+    #SELECT_INFO > span {
+         padding: 0 3px;
+    }
+
+        @media screen and (max-width: 750px) {
+            #bodyFS > div * {
+                font-size: 10px;
+            }
         }
-    }
 
-    #bodyFS input[type=radio] {
+        #bodyFS input[type=radio] {
         width: 1px;
         height: 1px;
         color: transparent;

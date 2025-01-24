@@ -497,6 +497,7 @@ class ZDATA {
 
 class ZDATA2{
      protected array $INFO;
+     public $ID = 0;
      public $LOADED = false;
      public $CLOSED = false;
      public $TYPE = ZType::NONE;
@@ -513,13 +514,14 @@ class ZDATA2{
         'ТікТок'
      ];
 
-     function __construct($id = -1, $type = ZType::NONE){
+     function __construct($id = 0, $type = ZType::NONE){
         $this->TYPE = $type;
+        $this->ID = $id;
         $this->LOAD($id);
      }
 
      function LOAD($id){
-        if ($id < 0)
+        if ($id <= 0)
             return;
 
         $conn = new SQLconn();

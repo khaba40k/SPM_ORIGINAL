@@ -274,7 +274,6 @@ class NovaPay {
         this.#CITY_SELECT.innerHTML = "";
         this.#WAREHOUSE_SELECT.innerHTML = "";
         this.#FINDED_ARRAY = [];
-        console.log("ОЧИЩЕНО");
     }
 
     #FIND(me, text) {
@@ -391,8 +390,8 @@ class NovaPay {
         str = CityOblToStartPos(str);
 
         str = str.replace(/[#|№].*/gi, '').trim();
-        str = str.replace(/[^А-яєїі\s\'-]/gi, ' ').trim();
-        str = str.replace(/(^|[^А-я])від[^\s]+/gi, '').trim();
+        str = str.replace(/[^А-яєїі'\s\'-]/gi, ' ').trim();
+        str = str.replace(/(^|[^А-яїіє])від[^\s]+/gi, '').trim();
 
         let arr = str.split(" ");
 
