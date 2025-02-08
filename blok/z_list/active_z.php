@@ -361,16 +361,28 @@ function getCorrectPhone(string $in, $kodKr = false):string{
      //Редагувати заявку
 
      function changeInfo($in, $var = 'def') {
-
-     $.ajax({
-         url: 'blok/z_create/new_Z.php',
-         method: 'GET',
-         dataType: 'html',
-         data: 'ID=' + $in+ '&type=' + $var,
-         success: function (data) {
-             $('#workfield').html(data);
+         if ($var == 'def') {
+              $.ajax({
+                      url: 'blok/z_create/create_DEF.php',
+                      method: 'GET',
+                      dataType: 'html',
+                      data: 'ID=' + $in,
+                      success: function (data) {
+                          $('#workfield').html(data);
+                      }
+              });
+         } else{
+              $.ajax({
+                      url: 'blok/z_create/new_Z.php',
+                      method: 'GET',
+                      dataType: 'html',
+                      data: 'ID=' + $in+ '&type=' + $var,
+                      success: function (data) {
+                          $('#workfield').html(data);
+                      }
+              });
          }
-     });
+
      }
 
     function removeInfo($in, $num) {

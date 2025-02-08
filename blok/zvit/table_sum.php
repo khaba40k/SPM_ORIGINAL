@@ -62,11 +62,6 @@ foreach ($arr_serv_ids as $i) {
 
         $result = $conn($query)[0];
 
-        //foreach ($result as $row){
-        //    $result = $row;
-        //    break;
-        //}
-
         $name_ind = $result['string_name'] !== null ? '' : '2';
 
         if ($result['_sum_out'] != null || $result['_sum_in'] != null || $result['_cnt_sps'] != null){

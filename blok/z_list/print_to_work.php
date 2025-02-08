@@ -2,198 +2,181 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . "/class/universal.php";
 
 $hideForWorker = $_GET['hideForWorker'] != 0;
-$type_Z = isset($_GET['type']) ? $_GET['type'] : 'new';
-$worker = '';
-
-if (!isset($_GET['variant'])){
-    $_GET['variant'] = 'def';
-}
-
-$cell_num = $_GET['variant'] == 'def' ? 'sholom_num' : 'sold_number';
+$ID = $_GET['ID'];
+$TYPE_Z = $_GET['type'] ?? 'new';
+$VARIANT = $_GET['variant'] ?? "def";
 
 $conn = new SQLconn();
 
-//Отримання списку кольорів
+$result = $conn->SELECT("client_info", "*", @"WHERE ID = {$ID} LIMIT 1");
 
-$_COLORS = array();
+if (count($result) == 1){
 
-$result = $conn('SELECT * FROM colors');
+    $cl_info = $result[0];
 
-$map = $conn('SELECT * FROM color_map');
+    $number = $cl_info['sholom_num'] ?? $cl_info['sold_number'];
 
-foreach ($result as $row) {
-    $_COLORS[$row['ID']] = new MyColor($row['ID'], $row['color'], $map, $row['css_name'], $row['is_def']);
-}
-
-//Отримання масиву послуг
-
-$_service_name = array();
-$arr_types = array();
-
-$result = $conn('SELECT * FROM `service_ids` ORDER BY `order` ASC');
-
-foreach ($result as $row) {
-    $_service_name[$row['ID']] = $row['NAME'];
-
-    if($row['ID'] != 19){
-        $arr_types[$row['ID']][1] = '';
+    if (!empty($number)){
+        $number = " №" . $number;
+    }else{
+        $number = "";
     }
 
-    $arr_types[19][$row['ID']] = " (" . $row['NAME'] . ")";
-}
+    $txt = ($VARIANT == "def" ? "ШОЛОМУ" : "ЗАЯВЦІ") . $number;
 
-//ВИБІРКА ІСНУЮЧИХ ТИПІВ
+    $tBody = new HTEL('tbody');
 
-$result = $conn('SELECT * FROM type_ids');
+    //ШАПКА
 
-foreach ($result as $row) {
-    $arr_types[$row["service_ID"]][$row["type_ID"]] = " (" . $row["name"] . ")";
-}
+    $tBody(new HTEL('tr',[
+          new HTEL('td/Дата надходження'),
+          new HTEL('td colspan=3/[0]', dateToNorm($cl_info['date_in'], false, true))
+    ]));
 
-//Введення даних отримувача
+    $tBody(new HTEL('tr', [
+        new HTEL('td/Термін'),
+        new HTEL('td colspan=3/[0]', dateToNorm($cl_info['date_max'], false, true))
+    ]));
 
-$result = $conn('SELECT * FROM `client_info` where `ID` = '. $_GET['ID'] . ' LIMIT 1');
+    if ($cl_info['date_out'] !== null)
+        $tBody(new HTEL('tr', [
+            new HTEL('td/Дата відправки'),
+            new HTEL('td colspan=3/[0]', dateToNorm($cl_info['date_out'], false, true))
+        ]));
 
-$serv_for_sol = '';
+    $phone = $hideForWorker ? "..." . substr($cl_info['phone'], -4) : $cl_info['phone'];
 
-$table = new HTEL('table .=printInfo');
+    $tBody(new HTEL('tr', [
+        new HTEL('td/Номер телефону'),
+        new HTEL('td colspan=3/[0]', $phone)
+    ]));
 
-$ttn = '';
+    if (!$hideForWorker)
+    $tBody(new HTEL('tr', [
+        new HTEL('td/Прізвище, ім`я'),
+        new HTEL('td colspan=3/[0]', $cl_info['client_name'])
+    ]));
 
-foreach ($result as $row) {
+    $tBody(new HTEL('tr', [
+        new HTEL('td/Реквізити'),
+        new HTEL('td colspan=3/[0]', $cl_info['reqv'])
+    ]));
 
-    $ID_NUM = $row[$cell_num] != 0 ? ' №'.$row[$cell_num]:'';
+    $ttn_info = $cl_info['TTN_IN'] !== null ? "Вх.: ". $cl_info['TTN_IN']: "";
+    $ttn_info .= $cl_info['TTN_OUT'] !== null ? " Вих.: " . $cl_info['TTN_OUT'] : "";
 
-    $table(new HTEL('caption/ІНФОРМАЦІЯ ПО [0][1]', [ $_GET['variant'] == 'def' ? 'ШОЛОМУ':'ЗАМОВЛЕННЮ', $ID_NUM]));
+    $tBody(new HTEL('tr', [
+        new HTEL('td/ТТН'),
+        new HTEL('td colspan=3/[0]', $ttn_info)
+    ]));
 
-    $tbody = new HTEL('tbody');
+    if ($hideForWorker)
+    $tBody(new HTEL('tr', [
+        new HTEL('td/Відповідальний'),
+        new HTEL('td colspan=3/[0]', $cl_info['redaktor'] ?? "")
+    ]));
 
-    $tbody(setRow('Дата надходження', dateToNorm($row['date_in'], false, true), 2));
-    $tbody(setRow('Термін', dateToNorm($row['date_max']), 2));
-    if ($type_Z == 'archiv') $tbody(setRow('Дата відправки', dateToNorm($row['date_out'], false, true), 2));
-    if (!$hideForWorker) $tbody(setRow('Номер телефону', $row['phone'], 2)); else
-        $tbody(setRow('Номер телефону', "..." . substr($row['phone'], -4), 2));//Показати останні 4 цифри
-    if (!$hideForWorker) $tbody(setRow('Прізвище, ім`я', $row['client_name'], 2));
-    if (!$hideForWorker) $tbody(setRow('Реквізити', $row['reqv'], 2));
+    //КОМПЛЕКТУЮЧІ
 
-    $ttn = !empty($row['TTN_IN']) ? 'Вхідна: ' . $row['TTN_IN'] . '  ' : '';
-    if (!empty($row['TTN_OUT'])) $ttn .= 'Вихідна: ' . $row['TTN_OUT'];
-    if( $ttn != '') $tbody(setRow('ТТН', $ttn, 2));
+    $print_status = $TYPE_Z == "archiv" ? "class=no-print" : "";
 
-    $ttn = !is_null($row['TTN_OUT']) ? $row['TTN_OUT'] : '';
-    if ($row['comm'] != null) $tbody(setRow('Коментар', $row['comm'], 2));
-    if ($row['discount'] != null)
-        $tbody(setRow('Врахована знижка', $row['discount'].'%', 2));
+    $tBody(new HTEL(@"tr {$print_status}", [
+        new HTEL('td &=text-align:center colspan=4/КОМПЛЕКТУЮЧІ')
+    ]));
 
-    $worker = $row['worker'];
-    if ($hideForWorker) $tbody(setRow('Відповідальний', $row['redaktor'], 2));
+    if (!empty($cl_info['comm']))
+    $tBody(new HTEL('tr', [
+        new HTEL('td &=text-align:center;font-weight:bold colspan=4/[0]', $cl_info['comm'])
+    ]));
 
-    $worker = !is_null($row['worker']) ? $row['worker'] : '';
+    $services = $conn("SELECT service_ids.NAME AS name, type_ids.name AS type, colors.color, ".
+    "service_out.count, service_out.costs ".
+    "FROM service_out JOIN service_ids ON service_ids.ID=service_out.service_ID ".
+    "LEFT JOIN type_ids ON service_out.service_ID=type_ids.service_ID AND service_out.type_ID=type_ids.type_ID ".
+    "LEFT JOIN colors ON service_out.color=colors.ID ".
+    @"WHERE service_out.ID={$ID} ORDER BY `order`");
 
-    $table($tbody);
-}
+    $sum_out = 0;
 
+    if (count($services) > 0){
+          $name = "";
+          $hide_style = $hideForWorker ? "display:none;" : "";
 
-//Введення комплектуючих
+          foreach($services as $serv){
+                 $name = $serv["name"] . ($serv['type'] != null ? @" ({$serv['type']})":"");
 
-$query = 'SELECT service_out.service_ID,service_out.type_ID,service_out.count,service_out.color,service_out.costs FROM service_out JOIN service_ids ON service_ids.ID=service_out.service_ID WHERE service_out.ID="' . $_GET['ID'] . '" ORDER BY `order` ASC';
+                 $tBody(new HTEL(@"tr {$print_status}", [
+                     new HTEL('td/[0]', $name),
+                     new HTEL('td &=text-align:center/[0]', $serv["count"]),
+                     new HTEL('td &=border-left-style:hidden/[0]', $serv["color"] ?? ""),
+                     new HTEL(@"td &={$hide_style}text-align:right;border-left-style:hidden/[0]", CostOut($serv["costs"]))
+                 ]));
 
-$result = $conn($query);
+                 $sum_out += $serv["costs"];
+          }
 
-$sum = 0;
-
-if (count($result) > 0) {
-
-    $tbody(setRow('КОМПЛЕКТУЮЧІ', '', 1, $type_Z != 'archiv'));
-
-    foreach ($result as $row) {
-
-        $sum += CostOut($row['costs']);
-
-        $col = isset($_COLORS[$row['color']]) ? $_COLORS[$row['color']]->NAME : '';
-
-        if ($col != '')
-            $col = " | " . $col;
-
-        $price = $hideForWorker ? '' : " | " . CostOut($row['costs']) . " грн.";
-
-        $tbody(
-            setRow(
-                $_service_name[$row['service_ID']] . $arr_types[$row['service_ID']][$row['type_ID']],
-                $row['count'] . $col . $price, 1, $type_Z != 'archiv'
-            )
-        );
-
-        $col = null;
+          if (!$hideForWorker)
+          $tBody(new HTEL("tr &=font-weight:bold", [
+              new HTEL('td colspan=2/ДО СПЛАТИ'),
+              new HTEL("td colspan=2 &=text-align:right;border-left-style:hidden/[0]", CostOut($sum_out))
+          ]));
     }
 
-    if (!$hideForWorker) $tbody(setRow('ДО СПЛАТИ', CostOut($sum)." грн.", 2));
-}
-else{
-    $sum = null;
+    if ($hideForWorker)
+        $tBody(new HTEL('tr', [
+            new HTEL('td/ПРАЦІВНИК'),
+            new HTEL('td colspan=3/[0]', $cl_info['worker'] ?? "")
+        ]));
+
+    $table = new HTEL('table .=printInfo', [new HTEL(@"caption/ІНФОРМАЦІЯ ПО {$txt}"), $tBody]);
+
+    $form = new HTEL('form !=infoForm onsubmit=return+false', $table);
+
+    if ($TYPE_Z == "inwork") {
+        $bottMenu = new HTEL('div .=no-print+doneApply');
+
+        $div = new HTEL('div');
+
+        $div(new HTEL('label for=worker/Працівник:'));
+        $div(new HTEL('input !=worker ?=worker #=[0] [r]', $cl_info['worker'] ?? ""));
+
+        $bottMenu($div);
+
+        $div = new HTEL('div');
+
+        $div(new HTEL('label for=ttn_done/Вихідна ТТН:'));
+        $div(new HTEL('input !=ttn_done ?=ttn_done #=[0] [r]', $cl_info['TTN_OUT'] ?? ""));
+
+        $bottMenu($div);
+
+        $div = new HTEL('div');
+
+        $div(new HTEL('label for=sum_fact/Сума (факт):'));
+        $div(new HTEL('input !=sum_fact ?=sum_fact #=[0] [r]', $sum_out));
+
+        $bottMenu($div);
+
+        $bottMenu(new HTEL('button !=but_done *=submit/>ВИКОНАНО'));
+
+        $form($bottMenu);
+    }
 }
 
 $conn->close();
 
-$form = new HTEL('form !=infoForm onsubmit=return+rec([0],`[1]`);',[$_GET['ID'], $_GET['variant']]);
-
-if ($hideForWorker){
-    $table(setRow('Виконавець', $worker.' '));
-}
-
-$form($table);
-
-if (!$hideForWorker && $type_Z == 'inwork' && $sum !== null){//Підтвердження виконання
-
-    $div = new HTEL('div .=no-print+doneApply');
-
-    $div(new HTEL('div' ,[
-    new HTEL('label for=worker/Працівник:'),
-    new HTEL('input !=worker *=text ?=worker #=[0] [r]', $worker)
-    ]));
-
-    $div(new HTEL('div' ,[
-    new HTEL('label for=ttn_done/Вихідна ТТН:'),
-    new HTEL('input !=ttn_done *=tel ?=ttn_done #=[0] [r]',$ttn)
-    ]));
-
-    $div(new HTEL('div' ,[
-    new HTEL('label for=sum_fact/Сума (факт):'),
-    new HTEL('input !=sum_fact *=number step=0.01 min=0 ?=sum_fact #=[0] [r]', CostOut($sum))
-    ]));
-
-    $div(new HTEL('button !=but_done *=submit/>Виконано'));
-    $form($div);
-}
-else if($worker != '' && !$hideForWorker && $type_Z != 'new'){
-    $div = new HTEL('div .=no-print+doneApply');
-    $div(new HTEL('label for=worker/Працівник:'));
-    $div(new HTEL('input !=worker *=text ?=worker #=[0] [ro]', $worker));
-    $form($div);
-}
-
 echo $form;
-
-function setRow($name, $val = '', $csp = 1, $toPrint = true):HTEL{
-    $out = new HTEL('tr .=[0]', $toPrint ? '':'no-print');
-
-    if (!empty($val)) {
-        $out(new HTEL('td/[0]', $name));
-        $out(new HTEL('td colspan=[0] &=width:50%;/[1]', [$csp, $val]));
-        if ($csp == 1)
-            $out(new HTEL('td &=width:10%;'));
-    } else {
-        $out(new HTEL('td colspan=3 &=text-align:center;/[0]', $name));
-    }
-
-    return $out;
-}
-
 ?>
 
 <script>
+    var ID = <?= json_encode($ID) ?>;
+    var TYPE = <?= json_encode($VARIANT) ?>;
+</script>
 
-    function rec($id = 1, $type = 'def') {
+<script>
+
+    $('#infoForm').submit(rec);
+
+    function rec() {
         if (!confirm('Підтвердіть виконання заявки...')) return false;
 
           dataForm = $('#infoForm :input').serialize();
@@ -202,7 +185,7 @@ function setRow($name, $val = '', $csp = 1, $toPrint = true):HTEL{
               url: 'blok/z_list/close_z.php',
               method: 'GET',
               dataType: 'html',
-              data: dataForm + '&ID=' + $id + '&type='+ $type,
+              data: dataForm + '&ID=' + ID + '&type='+ TYPE,
                   success: function (data) {
                       $('#workfield').html(data);
                   }
@@ -212,3 +195,9 @@ function setRow($name, $val = '', $csp = 1, $toPrint = true):HTEL{
     }
 
 </script>
+
+<style>
+td:first-child:not(:last-child){
+    width: 40%;
+}
+</style>

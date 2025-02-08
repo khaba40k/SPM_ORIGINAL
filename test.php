@@ -22,7 +22,13 @@
 
     require_once $_SERVER['DOCUMENT_ROOT'] . "/class/universal.php";
 
-    require "test2.php"; //ЗАЛИШИТИ
+    //$_GET['ID'] = 1977;
+    //$_GET['hideForWorker'] = 0;
+    //$_GET['type'] = "archiv";//archive
+    //$_GET['variant'] = "def";
+
+    //require "test_print.php";
+    require "create_SOLD.php"; //ЗАЛИШИТИ
     
     //$inp = new HTEL('input !=explain');
     //$subm = new HTEL('button *=submit !=subm/+');

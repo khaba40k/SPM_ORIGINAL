@@ -14,6 +14,7 @@ class SQLconn{
     private $CONN;
     private $host = '127.0.0.1';
     private $database = 'sholompr_data';
+    public $DB = "";
     private $user = 'sholompr_admin';
     private $password = 'R[$cB{&A5n]$';
     private $QUERYANS = null;
@@ -59,7 +60,17 @@ class SQLconn{
         return $out_arr;
     }
 
+    function SELECT_DB($fields = "*", $q_end = ""){
+        if (!empty($this->DB)) {
+            return $this->SELECT($this->DB, $fields, $q_end);
+        }else{
+            return [];
+        }
+    }
+
     function SELECT($database, $fields = '*', $q_end = ''):array{
+        $this->DB = $database;
+
         $flds = ''; $fieldArr = array();
 
         if (!is_array($fields)){
@@ -99,7 +110,18 @@ class SQLconn{
         return $this->query($q);
     }
 
+    function INSERT_DB(array $values, $OD_UPD_KEY = 1, $q_end = ''){
+        if (!empty($this->DB)) {
+            $this->INSERT($this->DB, $values, $OD_UPD_KEY, $q_end);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     function INSERT($database, array $values, $OD_UPD_KEY = 1, $q_end = ''){
+        $this->DB = $database;
+
         $q = "INSERT INTO `" . $database . "` ";
         $keys = ""; $vals = "";
  
@@ -135,8 +157,6 @@ class SQLconn{
             }
         }
 
-        //echo $q . " " . trim($q_end) . "\n<br>";
-
         $this->query($q . " " . trim($q_end));
     }
 
@@ -151,7 +171,18 @@ class SQLconn{
          }
     }
 
+    function UPDATE_DB(array $values, $q_end = ''){
+        if (!empty($this->DB)) {
+            $this->UPDATE($this->DB, $values, $q_end);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     function UPDATE($database, array $values, $q_end = ''){
+        $this->DB = $database;
+
         $q = 'UPDATE `' . $database . '` SET ';
         $tmp = '';
 
@@ -163,21 +194,39 @@ class SQLconn{
 
         $q .= substr(trim($tmp), 0, strlen($tmp) - 2);
 
-        //echo $q . " " . trim($q_end) . "\n<br>";
-
         $this->query($q . " " . trim($q_end));
     }
 
-    function DELETE($database, $where){
+    function DELETE_FROM_DB($where){
+        if (!empty($this->DB)) {
+            $this->DELETE($this->DB, $where);
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-        $q = 'DELETE FROM `' . $database . '` WHERE ' . $where;
-        //echo $q;
+    function DELETE($database, $where){
+        $this->DB = $database;
+
+        $q = 'DELETE FROM `' . $database . '` WHERE ' . trim(str_ireplace("WHERE", "", $where));
+
         $this->query($q);
     }
 
+    function CLEAR_DB(){
+        if (!empty($this->DB)) {
+            $this->CLEAR($this->DB);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     function CLEAR($database){
+        $this->DB = $database;
+
         $q = 'DELETE FROM `' . $database . '`';
-        //echo $q;
         $this->query($q);
     }
 
@@ -197,7 +246,7 @@ class SQLconn{
 
                     $out["`" . $k . "`"] = "\"" . $tmp . "\"";
                 }else{
-                    $out["`" . $k . "`"] = $v;
+                    $out["`" . $k . "`"] = "\"" . $v . "\"";
                 }
             }else{
                 $out["`" . $k . "`"] = 'NULL';
@@ -496,9 +545,10 @@ class ZDATA {
 }
 
 class ZDATA2{
-     protected array $INFO;
+     protected array $INFO = [];
      public $ID = 0;
      public $LOADED = false;
+     public $DISCOUNT_IGNORE = false;
      public $CLOSED = false;
      public $TYPE = ZType::NONE;
      public $NUMBER_LABLE = "sholom_num";
@@ -520,6 +570,15 @@ class ZDATA2{
         $this->LOAD($id);
      }
 
+     protected function VALIDATE_LOAD($shol_num_val):bool{
+        if ($this->TYPE == ZType::NONE)
+            return true;
+
+        $TABLE_LINE_TYPE = $shol_num_val !== null ? ZType::DEFF : ZType::SOLD;
+
+        return $TABLE_LINE_TYPE == $this->TYPE;
+     }
+
      function LOAD($id){
         if ($id <= 0)
             return;
@@ -528,7 +587,8 @@ class ZDATA2{
 
         $result = $conn->SELECT('client_info', '*', 'WHERE ID = ' . $id);
 
-        if (count($result) == 1){
+        if (count($result) == 1 && $this->VALIDATE_LOAD($result[0]["sholom_num"])){
+
             $this->LOADED = true;
 
             $this->INFO = $result[0];
@@ -547,6 +607,12 @@ class ZDATA2{
             if ($result[0]['date_out'] !== null)
                 $this->CLOSED = true;
 
+                // discount CHECK to ignore
+
+            if (is_numeric($result[0]['discount'])){
+                $this->DISCOUNT_IGNORE = true;
+            }
+
             //mess comm
             $temp = explode(' ', $this->INFO['comm']);
 
@@ -559,9 +625,6 @@ class ZDATA2{
                       }
                 }
             }
-
-            //callback
-            $this->INFO['callback'] = $this->INFO['callback'] === 0 ? 'checked' : '';
 
             $result = $conn->SELECT('service_out', '*', 'WHERE ID = ' . $id);
 
@@ -594,29 +657,29 @@ class ZDATA2{
      }
 
      function GET($name, $deffault = ''){
-        if (isset($this->INFO[$name])){
-            return $this->INFO[$name];
-        }
-
-        return $deffault;
+        return $this->INFO[$name] ?? $deffault;
      }
 
      function GET_SERVICE($id){
-        return isset($this->INFO['SERVICES'][$id]) ? $this->INFO['SERVICES'][$id] : null;
+        return $this->INFO['SERVICES'][$id] ?? null;
      }
 
      function GET_SERVICES():array{
-        $out = [];
-
-        if (isset($this->INFO['SERVICES'])){
-            return $this->INFO['SERVICES'];
-        }
-
-        return $out;
-      }
+        return $this->INFO['SERVICES'] ?? [];
+     }
 
      function ToArray():array{
         return $this->INFO;
+     }
+
+     function JSONArray(){
+
+        if (is_array($this->INFO)){
+            return json_encode($this->INFO);
+        }else{
+            return "{}";
+        }
+
      }
 }
 

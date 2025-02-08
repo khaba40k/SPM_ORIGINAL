@@ -5,10 +5,12 @@
         $(this).toggleClass('clicked_but');
     });
 
+    //url: 'blok/z_create/new_Z.php',
+
     function newZ() {
 
         $.ajax({
-            url: 'blok/z_create/new_Z.php',
+            url: 'blok/z_create/create_DEF.php',
             dataType: 'html',
             success: function (responce) {
                 $('#zakaz_workplace').html(responce);

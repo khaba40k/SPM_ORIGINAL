@@ -8,9 +8,11 @@ $conn = new SQLconn();
 
 //ДАНІ ЗАЯВКИ
 
-#region ОБРОБКА ВХІДНИХ ДАНИХ
+session_start();
 
-//$_GET['ID'] = 1709;
+$user = ($_SESSION['logged'] ?? null) !== null ? true : false;
+
+#region ОБРОБКА ВХІДНИХ ДАНИХ
 
 $INPUT = new ZDATA2($_GET['ID'] ?? 0, ZType::DEFF);
 
@@ -86,7 +88,7 @@ $fsHead(new HTEL('div', [
     $INPUT->GET('reqv'),
     new HTEL('label for=[0]/[2]'),
     new HTEL('div', [
-        new HTEL('input *=[1] !=[0] ?=[0] #=[3] list=list_town [r]'),
+        new HTEL('input *=[1] !=[0] ?=[0] #=[3] $=[2] list=list_town [r]', [2=>"населений пункт, номер відділення"]),
         new HTEL('select !=NP_town'),
         new HTEL('datalist !=list_town'),
         new HTEL('select !=NP_vidd')
@@ -113,14 +115,26 @@ if ($INPUT->CLOSED)
         new HTEL('input *=[1] !=[0] ?=[0] #=[3]')
     ]));
 
-$fsHead(new HTEL('div', [
-    "discount",
-    "text",
-    "Дисконт",
-    $INPUT->GET('discount'),
-    new HTEL('label for=[0]/[2]'),
-    new HTEL('input *=[1] !=[0] ?=[0] min=5 max=5 #=[3]')
-]));
+if ($INPUT->LOADED && $INPUT->GET('discount') != ""){
+    $fsHead(new HTEL('div', [
+        "discount",
+        "text",
+        "Дисконт",
+        $INPUT->GET('discount'),
+        new HTEL('label for=[0]/[2]'),
+        new HTEL('input *=[1] !=[0] ?=[0] #=[3] [ro]')
+    ]));
+}
+else{
+    $fsHead(new HTEL('div', [
+        "discount",
+        "text",
+        "Дисконт",
+        $INPUT->GET('discount'),
+        new HTEL('label for=[0]/[2]'),
+        new HTEL('input *=[1] !=[0] ?=[0] min=1 max=5 #=[3]')
+    ]));
+}
 
 if ($INPUT->TYPE == ZType::DEFF || $INPUT->TYPE == ZType::SOLD) {
     $messOpt = [];
@@ -163,18 +177,22 @@ $fsHead(new HTEL('div', [
     $terminovoPrice,
     $terminovoCheck,
     new HTEL('label for=[0]/[2] (+[3] грн.)'),
-    new HTEL('input *=[1] !=[0] ?=cost[21] #=[3] [4]')
+    new HTEL('input *=[1] !=[0] #=[3] [4]')
 ]));
 
-if (!$INPUT->CLOSED)
+if (!$INPUT->CLOSED){
+
+    $clb = ($INPUT->GET('callback') == 1 || !$user) ? "" : "checked";
+
     $fsHead(new HTEL('div', [
         "callback",
         "checkbox",
         "Не телефонуйте мені",
-        $INPUT->GET('callback'),
+        $clb,
         new HTEL('label for=[0]/[2]'),
-        new HTEL('input *=[1] !=[0] ?=[0] [3]')
+        new HTEL('input *=[1] !=[0] [3]')
     ]));
+}
 
 $container($fsHead);
 
@@ -273,7 +291,7 @@ foreach ($SERVICES as $s) {
             $s['TYPES'][1]['COST'],
             $readOnlyPriceAtr,
             new HTEL('label for=[0]_yes/[1]'),
-            new HTEL('input .=price_input ?=cost[[0]] *=number min=0 [3] #=[2]'),
+            new HTEL('input .=price_input ?=cost[[0]] *=number step=0.01 min=0 [3] #=[2]'),
             new HTEL('input *=radio !=[0]_yes1 ?=service_ID[[0]] servID=[0] VZ #=[0] [1] price=[2]', [1 => $POSL, $vidZamovnPrice]),
             new HTEL('label for=[0]_yes1/своє'),
             new HTEL('input *=radio !=[0]_yes ?=service_ID[[0]] servID=[0] #=yes price=[2]'),
@@ -351,6 +369,8 @@ echo new HTEL("div !=SELECT_INFO");
 
     var INPUTSERVICES = <?= json_encode($INPUT->GET_SERVICES()) ?>
 
+    var DISCOUNT_IGNORE = <?= json_encode($INPUT->DISCOUNT_IGNORE) ?>
+
         //NOVA POSHTA
 
     var NP_INP = document.getElementById('reqv');
@@ -374,6 +394,8 @@ echo new HTEL("div !=SELECT_INFO");
 <script>
 
     var LAST_SELECTED_COLOR = -1;
+
+    var DISCOUNT_KOEF = 1;
 
     INPUT_SET();
 
@@ -554,10 +576,10 @@ echo new HTEL("div !=SELECT_INFO");
     function ColorAppend(_servID, _servType = 1, _colorID = -1) {
         let _out = "";
 
-        let get_color_name = function (id) {
+        let get_color_name = function (id, css = false) {
             let out = "";
 
-            $.each(COLORS, (ind, col) => { if (ind == id) {  out = col.value; return; } });
+            $.each(COLORS, (ind, col) => { if (ind == id) { out = (css ? col.name.match(/#[\w\d]+/) : col.value); return; } });
 
             return out;
         };
@@ -578,7 +600,7 @@ echo new HTEL("div !=SELECT_INFO");
                     _out += '<input type="radio" id="color_' + _servID + '_' + i +
                         '" name="color[' + _servID + ']" value="' + v +
                         '" ' + tempAtr + '="" /><label for="color_' + _servID +
-                        '_' + i + '">' + get_color_name(v) + '</label>';
+                        '_' + i + '" style="border-left: solid 10px;border-color:'+get_color_name(v, true)+';">' + get_color_name(v) + '</label>';
                 });
 
                 return;
@@ -591,7 +613,12 @@ echo new HTEL("div !=SELECT_INFO");
     $('.price_input, #terminovo').change(PRE_SUM_SHOW);
 
     function PRE_SUM_SHOW() {
-        let out = $('#terminovo').prop('checked') ? $('#terminovo').val() * 1 : 0;
+        let out = $('#terminovo').prop('checked') ? $('#terminovo').val() * DISCOUNT_KOEF : 0;
+
+        let temp = $('label[for="terminovo"]')[0].innerHTML;
+
+        $('label[for="terminovo"]')[0].innerHTML = temp.replace(/\+[\S]+/, "+" + Number(($('#terminovo').val() * DISCOUNT_KOEF).toFixed(2)));
+
         let IsYes;
         let Cost = 0;
 
@@ -601,36 +628,15 @@ echo new HTEL("div !=SELECT_INFO");
 
             if (IsYes.length > 0) {
 
-                Cost = $.find(':input[type=number]', srv)[0].value * 1;
+                Cost = $.find(':input[type=number]', srv)[0].value * DISCOUNT_KOEF;
 
-                if (IsYes[0].value != "no") {
+                if (IsYes[0].value != "no" && ($.find(':input[name*="type["]:checked', srv).length > 0 || $.find(':input[VZ]:checked', srv).length > 0)) {
                       out += Cost;
                 }
             }
         });
-        $('#priceLabel').val(out + " грн.");
+        $('#priceLabel').val(Number(out.toFixed(2)) + " грн.");
     }
-
-    //var ID_NAME_ARR = [];
-
-    //SET_ID_NAME_ARR();
-
-    //function SERIALIZE(onlyServices = false) {
-
-    //    let OUT = ID_NAME_ARR.concat($('#bodyFS').serializeArray());
-
-    //    if ($('#terminovo').prop('checked')) {
-    //        OUT.push({ name: "service_ID[21]", value: 1 });
-    //        OUT.push({ name: "cost[21]", value: $('#terminovo').val() });
-    //    }
-
-    //    if (!onlyServices) {
-    //        OUT = OUT.concat($('#headFS').serializeArray());
-    //        OUT = OUT.concat({ name: "ID", value: LoadedID }, { name: "worker", value: $('#worker').val() }, { name: "redaktor", value: $('#redaktor').val() });
-    //    }
-
-    //    return OUT;
-    //}
 
     function SERIALIZE(onlyService = false) {
 
@@ -695,7 +701,7 @@ echo new HTEL("div !=SELECT_INFO");
             counter++;
         }
 
-        let serv_ind = 0; let serv_ind_19 = 0;
+        let serv_ind = 0; let serv_ind_19 = 0; let checkedColorInp = null;
 
         $.each(type_arr, (ind, type) => {
 
@@ -708,27 +714,54 @@ echo new HTEL("div !=SELECT_INFO");
             OUT.push({ name: "SERVICES[" + counter + "][NAME]", value: GET_SERVICE_NAME(serv_ind) });
             OUT.push({ name: "SERVICES[" + counter + "][TYPE][ID]", value: type.value });
             OUT.push({ name: "SERVICES[" + counter + "][TYPE][NAME]", value: GET_SERVICE_NAME(serv_ind, type.value) });
-            OUT.push({ name: "SERVICES[" + counter + "][COLOR][ID]", value: $("input[name='color[" + serv_ind + "]']:checked").val() });
-            OUT.push({ name: "SERVICES[" + counter + "][COLOR][NAME]", value: $("label[for='color_" + serv_ind + "_" + type.value + "']").text().trim() });
+            checkedColorInp = $("input[name='color[" + serv_ind + "]']:checked");
+            OUT.push({ name: "SERVICES[" + counter + "][COLOR][ID]", value: checkedColorInp.val() });
+            OUT.push({ name: "SERVICES[" + counter + "][COLOR][NAME]", value: $("label[for='" + checkedColorInp.attr("id") + "']").text().trim() });
             OUT.push({ name: "SERVICES[" + counter + "][COST]", value: $("input[name='cost[" + serv_ind_19 + "]']").val() });
 
             counter++;
         });
 
         if (onlyService) {
-            return COLORS.concat(OUT);
+            return [{ name: "dKoef", value: DISCOUNT_KOEF }].concat(COLORS.concat(OUT));
         } else {
-            return [{ name: "ID", value: LoadedID }].concat($('#headFS').serializeArray().concat(OUT));
+            let TEMP_ARR = [{ name: "ID", value: LoadedID }];
+
+            if ($('#callback').prop('checked') != undefined && $('#callback').prop('checked')) {
+                TEMP_ARR.push({ name: "callback", value: 0 });
+            } else {
+                TEMP_ARR.push({ name: "callback", value: 1 });
+            }
+
+            TEMP_ARR.push({ name: "redaktor", value: $('#redaktor').val() });
+            TEMP_ARR.push({ name: "worker", value: $('#worker').val() });
+            TEMP_ARR.push({ name: "ZTYPE", value: "DEFF" });
+            TEMP_ARR.push({ name: "DISCOUNT_IGNORE", value: DISCOUNT_IGNORE });
+
+            return TEMP_ARR.concat($('#headFS').serializeArray().concat(OUT));
         }
     }
 
     $('#container').submit(this.SUBM);
 
     function SUBM() {
+        if (!confirm("ЗБЕРЕГТИ ЗАЯВКУ?")) return;
+
         $.get('blok/z_create/RecZ.php', SERIALIZE(), (succes) => {
-            $('#ans').html(succes);
+            document.location = succes;
         });
     }
+
+    $('input#discount').on('input', (inp) => {
+        //console.log(inp.currentTarget.value);
+        if (inp.currentTarget.value > 0 && inp.currentTarget.value < 100) {
+            DISCOUNT_KOEF = (100 - inp.currentTarget.value) / 100;
+        } else {
+            DISCOUNT_KOEF = 1;
+        }
+
+        PRE_SUM_SHOW();
+    });
 
     $('#priceLabel, #submBut').mouseenter(() => {
         SHOW_CHECK();
@@ -742,7 +775,7 @@ echo new HTEL("div !=SELECT_INFO");
 
     function SHOW_CHECK() {
 
-        $.get("show_check.php", this.SERIALIZE(true), (ans) => {
+        $.get("blok/z_create/show_check.php", this.SERIALIZE(true), (ans) => {
             $("#SELECT_INFO").html(ans);
         });
 
@@ -811,12 +844,12 @@ echo new HTEL("div !=SELECT_INFO");
     #priceLabel {
         position: sticky;
         width: 140px;
-        font-size: 26px;
+        font-size: 24px;
         background-color: yellow;
-        border: solid 5px blue;
-        border-radius: 20px 0 0 0;
-        right: 10px;
-        top: 30px;
+        border: solid 4px blue;
+        border-radius: 15px 0 0 0;
+        top: 10px;
+        left: 5px;
         font-weight: bold;
         font-style: italic;
         color: #353535;
@@ -831,8 +864,9 @@ echo new HTEL("div !=SELECT_INFO");
         z-index: 999;
         grid-column-gap: 10px;
         width: fit-content;
+        max-width: 85%;
         right: 30px;
-        bottom: 100px;
+        bottom: 200px;
         background-color: white;
         color: #141414;
         grid-template-columns: auto auto auto;

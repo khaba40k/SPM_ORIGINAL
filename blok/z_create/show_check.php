@@ -1,7 +1,10 @@
+
 <?php
 $SERVICES = $_GET["SERVICES"];
 
 $COLORS = $_GET["COLOR"];
+
+$DISCOUNT_KOEF = $_GET["dKoef"];
 
 if (!is_array($SERVICES) || count($SERVICES) == 0){
     echo "<span style='grid-column: 1 / 4;text-align: center;'>НІЧОГО НЕ ОБРАНО</span>";
@@ -18,7 +21,9 @@ $color = "";
 
 foreach($SERVICES as $serv){
 
-    $color = key($COLORS[$serv["COLOR"]["ID"]]);
+    $color = (isset($serv["COLOR"]["ID"]) && is_numeric($serv["COLOR"]["ID"]) ) ? key($COLORS[$serv["COLOR"]["ID"]]):"black";
+
+    $serv["COST"] = round($serv['COST'] * $DISCOUNT_KOEF, 2);
 
     echo 
     @"<span style='color:{$color}'>" . $counter++ . ".</span>" .

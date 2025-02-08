@@ -446,13 +446,13 @@ aside ul li {
     background-image: url(/img/print.png);
 }
 
-main {
+main{
     overflow: auto;
 }
 
-    main > form, main > table {
-        width: 80%;
-        margin: 0 10%;
+    main > * {
+        width: 90%;
+        margin: 0 5%;
         padding: 10px 10px;
     }
 
@@ -1256,23 +1256,14 @@ select#creator{
     background:none;
 }
 
-.zvitMenu, .expensesMenu {
+.expensesMenu {
     display: inline-block;
     width: 100%;
     padding: 5px 5px;
 }
 
-#zvitResult{
-    padding: 0 10%;
-}
-
 #zvitResult > * {
     width:100%;
-}
-
-#zvitMenu > button {
-    width: 19%;
-    font-size: 60%;
 }
 
 #expensesMenu  > button{
@@ -1341,20 +1332,11 @@ input.delrow {
         cursor: pointer;
     }
 
-    .zvitMenu > form *,
+    
     .expensesMenu > form * {
         position: center;
         display: inline-block;
     }
-
-#periodVariant {
-    color: white;
-    font-weight: bold;
-    margin-top: 10px;
-    padding: 10px;
-    background: linear-gradient(to bottom, darkolivegreen, var(--bckgrndclr));
-    border-radius: 10px;
-}
 
 #numberToInfo > *{
     display: inline-block;
@@ -1545,7 +1527,7 @@ div.filter_ans * {
 
 }
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 1200px) {
 
     :root {
         --wh-menu-it: 60px;
@@ -1567,7 +1549,6 @@ div.filter_ans * {
     }
 
     .menu-cont ul {
-        /*grid-template-columns: auto;*/
         grid-template-columns: repeat(auto-fill, calc( var(--wh-menu-it) + 18px));
     }
 
@@ -1587,7 +1568,7 @@ div.filter_ans * {
         padding: 0;
     }
 
-        main > form, main table {
+        main > * {
             width: 100%;
             margin: 0;
         }
