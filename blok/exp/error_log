@@ -72,3 +72,18 @@ Stack trace:
 #2 /home2/sholompr/public_html/blok/exp/record_in.php(12): SQLconn->__construct()
 #3 {main}
   thrown in /home2/sholompr/public_html/class/universal.php on line 32
+[17-Jan-2025 20:16:57 Europe/Kiev] PHP Warning:  Undefined array key "logged" in /home2/sholompr/public_html/blok/exp/jurnal.php on line 79
+[17-Jan-2025 20:16:57 Europe/Kiev] PHP Stack trace:
+[17-Jan-2025 20:16:57 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/exp/jurnal.php:0
+[17-Jan-2025 20:16:57 Europe/Kiev] PHP Warning:  Undefined array key "" in /home2/sholompr/public_html/blok/exp/jurnal.php on line 79
+[17-Jan-2025 20:16:57 Europe/Kiev] PHP Stack trace:
+[17-Jan-2025 20:16:57 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/exp/jurnal.php:0
+[30-Apr-2025 16:52:55 Europe/Kiev] PHP Warning:  Undefined array key "logged" in /home2/sholompr/public_html/blok/exp/expenses.php on line 7
+[30-Apr-2025 16:52:55 Europe/Kiev] PHP Stack trace:
+[30-Apr-2025 16:52:55 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/exp/expenses.php:0
+[30-Apr-2025 16:53:23 Europe/Kiev] PHP Warning:  Undefined array key "logged" in /home2/sholompr/public_html/blok/exp/jurnal.php on line 79
+[30-Apr-2025 16:53:23 Europe/Kiev] PHP Stack trace:
+[30-Apr-2025 16:53:23 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/exp/jurnal.php:0
+[30-Apr-2025 16:53:23 Europe/Kiev] PHP Warning:  Undefined array key "" in /home2/sholompr/public_html/blok/exp/jurnal.php on line 79
+[30-Apr-2025 16:53:23 Europe/Kiev] PHP Stack trace:
+[30-Apr-2025 16:53:23 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/exp/jurnal.php:0

@@ -13,3 +13,23 @@
 [01-Apr-2024 08:25:42 UTC] PHP Parse error:  Unclosed '[' on line 102 does not match ')' in /home2/sholompr/public_html/blok/set/serv_one_type_blok.php on line 104
 [01-Apr-2024 08:25:42 UTC] PHP Parse error:  Unclosed '[' on line 102 does not match ')' in /home2/sholompr/public_html/blok/set/serv_one_type_blok.php on line 104
 [01-Apr-2024 08:25:42 UTC] PHP Parse error:  Unclosed '[' on line 102 does not match ')' in /home2/sholompr/public_html/blok/set/serv_one_type_blok.php on line 104
+[01-Mar-2025 15:13:20 Europe/Kiev] PHP Warning:  Undefined array key "service_id" in /home2/sholompr/public_html/blok/set/save_set.php on line 23
+[01-Mar-2025 15:13:20 Europe/Kiev] PHP Stack trace:
+[01-Mar-2025 15:13:20 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/set/save_set.php:0
+[01-Mar-2025 15:13:20 Europe/Kiev] PHP Warning:  Undefined array key "cat" in /home2/sholompr/public_html/blok/set/save_set.php on line 42
+[01-Mar-2025 15:13:20 Europe/Kiev] PHP Stack trace:
+[01-Mar-2025 15:13:20 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/set/save_set.php:0
+[01-Mar-2025 15:13:20 Europe/Kiev] PHP Warning:  foreach() argument must be of type array|object, null given in /home2/sholompr/public_html/blok/set/save_set.php on line 46
+[01-Mar-2025 15:13:20 Europe/Kiev] PHP Stack trace:
+[01-Mar-2025 15:13:20 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/set/save_set.php:0
+[01-Mar-2025 15:13:20 Europe/Kiev] PHP Warning:  Undefined array key "atr" in /home2/sholompr/public_html/blok/set/save_set.php on line 52
+[01-Mar-2025 15:13:20 Europe/Kiev] PHP Stack trace:
+[01-Mar-2025 15:13:20 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/set/save_set.php:0
+[01-Mar-2025 15:13:20 Europe/Kiev] PHP Warning:  foreach() argument must be of type array|object, null given in /home2/sholompr/public_html/class/universal.php on line 736
+[01-Mar-2025 15:13:20 Europe/Kiev] PHP Stack trace:
+[01-Mar-2025 15:13:20 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/set/save_set.php:0
+[01-Mar-2025 15:13:20 Europe/Kiev] PHP   2. sumArray($in = NULL) /home2/sholompr/public_html/blok/set/save_set.php:52
+[01-Mar-2025 15:13:20 Europe/Kiev] PHP Fatal error:  Uncaught TypeError: Cannot access offset of type string on string in /home2/sholompr/public_html/blok/set/save_set.php:101
+Stack trace:
+#0 {main}
+  thrown in /home2/sholompr/public_html/blok/set/save_set.php on line 101

@@ -3886,3 +3886,59 @@ Stack trace:
 [06-Oct-2024 10:21:50 UTC] PHP Stack trace:
 [06-Oct-2024 10:21:50 UTC] PHP   1. {main}() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:0
 [06-Oct-2024 10:21:50 UTC] PHP   2. QUERY_MASTER->GET_POSITIVE() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:209
+[22-Jan-2025 11:48:08 Europe/Kiev] PHP Warning:  foreach() argument must be of type array|object, null given in /home2/sholompr/public_html/blok/sms/get_client_list_query.php on line 127
+[22-Jan-2025 11:48:08 Europe/Kiev] PHP Stack trace:
+[22-Jan-2025 11:48:08 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:0
+[22-Jan-2025 11:48:08 Europe/Kiev] PHP   2. QUERY_MASTER->GET_NEGATIVE() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:196
+[22-Jan-2025 11:48:08 Europe/Kiev] PHP Warning:  foreach() argument must be of type array|object, null given in /home2/sholompr/public_html/blok/sms/get_client_list_query.php on line 41
+[22-Jan-2025 11:48:08 Europe/Kiev] PHP Stack trace:
+[22-Jan-2025 11:48:08 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:0
+[22-Jan-2025 11:48:08 Europe/Kiev] PHP   2. QUERY_MASTER->GET_POSITIVE() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:209
+[27-Jan-2025 22:14:58 Europe/Kiev] PHP Warning:  foreach() argument must be of type array|object, null given in /home2/sholompr/public_html/blok/sms/get_client_list_query.php on line 127
+[27-Jan-2025 22:14:58 Europe/Kiev] PHP Stack trace:
+[27-Jan-2025 22:14:58 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:0
+[27-Jan-2025 22:14:58 Europe/Kiev] PHP   2. QUERY_MASTER->GET_NEGATIVE() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:196
+[27-Jan-2025 22:14:58 Europe/Kiev] PHP Warning:  foreach() argument must be of type array|object, null given in /home2/sholompr/public_html/blok/sms/get_client_list_query.php on line 41
+[27-Jan-2025 22:14:58 Europe/Kiev] PHP Stack trace:
+[27-Jan-2025 22:14:58 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:0
+[27-Jan-2025 22:14:58 Europe/Kiev] PHP   2. QUERY_MASTER->GET_POSITIVE() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:209
+[29-Jan-2025 08:31:15 Europe/Kiev] PHP Warning:  foreach() argument must be of type array|object, null given in /home2/sholompr/public_html/blok/sms/get_client_list_query.php on line 127
+[29-Jan-2025 08:31:15 Europe/Kiev] PHP Stack trace:
+[29-Jan-2025 08:31:15 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:0
+[29-Jan-2025 08:31:15 Europe/Kiev] PHP   2. QUERY_MASTER->GET_NEGATIVE() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:196
+[29-Jan-2025 08:31:15 Europe/Kiev] PHP Warning:  foreach() argument must be of type array|object, null given in /home2/sholompr/public_html/blok/sms/get_client_list_query.php on line 41
+[29-Jan-2025 08:31:15 Europe/Kiev] PHP Stack trace:
+[29-Jan-2025 08:31:15 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:0
+[29-Jan-2025 08:31:15 Europe/Kiev] PHP   2. QUERY_MASTER->GET_POSITIVE() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:209
+[29-Jan-2025 20:11:43 Europe/Kiev] PHP Warning:  foreach() argument must be of type array|object, null given in /home2/sholompr/public_html/blok/sms/get_client_list_query.php on line 127
+[29-Jan-2025 20:11:43 Europe/Kiev] PHP Stack trace:
+[29-Jan-2025 20:11:43 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:0
+[29-Jan-2025 20:11:43 Europe/Kiev] PHP   2. QUERY_MASTER->GET_NEGATIVE() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:196
+[29-Jan-2025 20:11:43 Europe/Kiev] PHP Warning:  foreach() argument must be of type array|object, null given in /home2/sholompr/public_html/blok/sms/get_client_list_query.php on line 41
+[29-Jan-2025 20:11:43 Europe/Kiev] PHP Stack trace:
+[29-Jan-2025 20:11:43 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:0
+[29-Jan-2025 20:11:43 Europe/Kiev] PHP   2. QUERY_MASTER->GET_POSITIVE() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:209
+[18-Mar-2025 18:45:07 Europe/Kiev] PHP Warning:  foreach() argument must be of type array|object, null given in /home2/sholompr/public_html/blok/sms/get_client_list_query.php on line 127
+[18-Mar-2025 18:45:07 Europe/Kiev] PHP Stack trace:
+[18-Mar-2025 18:45:07 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:0
+[18-Mar-2025 18:45:07 Europe/Kiev] PHP   2. QUERY_MASTER->GET_NEGATIVE() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:196
+[18-Mar-2025 18:45:07 Europe/Kiev] PHP Warning:  foreach() argument must be of type array|object, null given in /home2/sholompr/public_html/blok/sms/get_client_list_query.php on line 41
+[18-Mar-2025 18:45:07 Europe/Kiev] PHP Stack trace:
+[18-Mar-2025 18:45:07 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:0
+[18-Mar-2025 18:45:07 Europe/Kiev] PHP   2. QUERY_MASTER->GET_POSITIVE() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:209
+[08-May-2025 09:51:36 Europe/Kiev] PHP Warning:  foreach() argument must be of type array|object, null given in /home2/sholompr/public_html/blok/sms/get_client_list_query.php on line 127
+[08-May-2025 09:51:36 Europe/Kiev] PHP Stack trace:
+[08-May-2025 09:51:36 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:0
+[08-May-2025 09:51:36 Europe/Kiev] PHP   2. QUERY_MASTER->GET_NEGATIVE() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:196
+[08-May-2025 09:51:36 Europe/Kiev] PHP Warning:  foreach() argument must be of type array|object, null given in /home2/sholompr/public_html/blok/sms/get_client_list_query.php on line 41
+[08-May-2025 09:51:36 Europe/Kiev] PHP Stack trace:
+[08-May-2025 09:51:36 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:0
+[08-May-2025 09:51:36 Europe/Kiev] PHP   2. QUERY_MASTER->GET_POSITIVE() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:209
+[08-May-2025 09:51:47 Europe/Kiev] PHP Warning:  foreach() argument must be of type array|object, null given in /home2/sholompr/public_html/blok/sms/get_client_list_query.php on line 127
+[08-May-2025 09:51:47 Europe/Kiev] PHP Stack trace:
+[08-May-2025 09:51:47 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:0
+[08-May-2025 09:51:47 Europe/Kiev] PHP   2. QUERY_MASTER->GET_NEGATIVE() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:196
+[08-May-2025 09:51:47 Europe/Kiev] PHP Warning:  foreach() argument must be of type array|object, null given in /home2/sholompr/public_html/blok/sms/get_client_list_query.php on line 41
+[08-May-2025 09:51:47 Europe/Kiev] PHP Stack trace:
+[08-May-2025 09:51:47 Europe/Kiev] PHP   1. {main}() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:0
+[08-May-2025 09:51:47 Europe/Kiev] PHP   2. QUERY_MASTER->GET_POSITIVE() /home2/sholompr/public_html/blok/sms/get_client_list_query.php:209
