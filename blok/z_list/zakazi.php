@@ -1,6 +1,5 @@
 <script>
-
-    $('.zakazi_but').on('click', function () {
+    $('.zakazi_but').on('click', function() {
         $('.zakazi_but').not(this).removeClass('clicked_but')
         $(this).toggleClass('clicked_but');
     });
@@ -12,7 +11,7 @@
         $.ajax({
             url: 'blok/z_create/create_DEF.php',
             dataType: 'html',
-            success: function (responce) {
+            success: function(responce) {
                 $('#zakaz_workplace').html(responce);
             }
         });
@@ -25,7 +24,7 @@
             method: 'GET',
             dataType: 'html',
             data: 'type=sold',
-            success: function (data) {
+            success: function(data) {
                 $('#zakaz_workplace').html(data);
             }
         });
@@ -35,18 +34,17 @@
         var datesend = 'type=' + $status;
 
         if (period != '') datesend += '&period=' + period;
-         
-          $.ajax({
-                url: 'blok/z_list/active_z.php',
-                method: 'GET',
-              dataType: 'html',
-              data: datesend,
-                success: function (data) {
-                    $('#zakaz_workplace').html(data);
-                }
-          });
-    };
 
+        $.ajax({
+            url: 'blok/z_list/active_z.php',
+            method: 'GET',
+            dataType: 'html',
+            data: datesend,
+            success: function(data) {
+                $('#zakaz_workplace').html(data);
+            }
+        });
+    };
 </script>
 
 <?php
@@ -59,15 +57,21 @@ $div = new HTEL('div .=zakaz_menu');
 
 session_start();
 
-switch ($_MENU){
+switch ($_MENU) {
     case 'list':
         $div([
-            new HTEL("button *=button !=activ_z_but .=zakazi_but[0] #=click onclick=location.href=='work?page==[2]' [1]/НОВІ[3]",
-            [$_GET['page'] == 'new' ? ' clicked_but':'', _style(3, 'color:red;'), 'new', ($_SESSION['count_new'] > 0 ? ' (' . $_SESSION['count_new'] . ')':'')]),
-            new HTEL("button *=button !=inwork_z_but .=zakazi_but[0] #=click onclick=location.href=='work?page==[2]' [1]/В РОБОТІ[3]",
-            [$_GET['page'] == 'inwork' ? ' clicked_but' : '', _style(3, 'color:yellow;'), 'inwork', ($_SESSION['count_inwork'] > 0 ? ' (' . $_SESSION['count_inwork'] . ')':'')]),
-            new HTEL("button *=button !=archiv_z_but .=zakazi_but[0] #=click onclick=location.href=='work?page==[2]' [1]/ВИКОНАНІ[3]",
-            [$_GET['page'] == 'archiv' ? ' clicked_but' : '', _style(3, 'color:green;'), 'archiv', ($_SESSION['count_archiv'] > 0 ? ' (' . $_SESSION['count_archiv'] . ')':'')])
+            new HTEL(
+                "button *=button !=activ_z_but .=zakazi_but[0] #=click onclick=location.href=='work?page==[2]' [1]/НОВІ[3]",
+                [$_GET['page'] == 'new' ? ' clicked_but' : '', _style(3, 'color:red;'), 'new', ($_SESSION['count_new'] > 0 ? ' (' . $_SESSION['count_new'] . ')' : '')]
+            ),
+            new HTEL(
+                "button *=button !=inwork_z_but .=zakazi_but[0] #=click onclick=location.href=='work?page==[2]' [1]/В РОБОТІ[3]",
+                [$_GET['page'] == 'inwork' ? ' clicked_but' : '', _style(3, 'color:yellow;'), 'inwork', ($_SESSION['count_inwork'] > 0 ? ' (' . $_SESSION['count_inwork'] . ')' : '')]
+            ),
+            new HTEL(
+                "button *=button !=archiv_z_but .=zakazi_but[0] #=click onclick=location.href=='work?page==[2]' [1]/ВИКОНАНІ[3]",
+                [$_GET['page'] == 'archiv' ? ' clicked_but' : '', _style(3, 'color:green;'), 'archiv', ($_SESSION['count_archiv'] > 0 ? ' (' . $_SESSION['count_archiv'] . ')' : '')]
+            )
         ]);
 
         echo new HTEL('script/list_Z(`[0]`, `[1]`);', [$_GET['page'], $_GET['period'] ?? '']);
@@ -75,16 +79,19 @@ switch ($_MENU){
     case 'create':
         $style = _style(2);
         $div([
-            new HTEL("button *=button !=create_z_but .=zakazi_but[0] #=click onclick=location.href=='work?page==[2]' [1]/ПЕРЕОБЛАДНАННЯ",
-            [$_GET['page'] == 'def' ? ' clicked_but' : '', $style, 'newZdef']),
-            new HTEL("button *=button !=sold_z_but .=zakazi_but[0] #=click onclick=location.href=='work?page==[2]' [1]/ПРОДАЖ",
-            [$_GET['page'] == 'sold' ? ' clicked_but' : '', $style, 'newZsold'])
+            new HTEL(
+                "button *=button !=create_z_but .=zakazi_but[0] #=click onclick=location.href=='work?page==[2]' [1]/ПЕРЕОБЛАДНАННЯ",
+                [$_GET['page'] == 'def' ? ' clicked_but' : '', $style, 'newZdef']
+            ),
+            new HTEL(
+                "button *=button !=sold_z_but .=zakazi_but[0] #=click onclick=location.href=='work?page==[2]' [1]/ПРОДАЖ",
+                [$_GET['page'] == 'sold' ? ' clicked_but' : '', $style, 'newZsold']
+            )
         ]);
 
-        if (isset($_GET['page']) && $_GET['page'] != 'def'){
+        if (isset($_GET['page']) && $_GET['page'] != 'def') {
             echo new HTEL('script/newZsold();');
-        }
-        else{
+        } else {
             echo new HTEL('script/newZ();');
         }
         break;
@@ -94,7 +101,8 @@ $div(new HTEL('div  !=zakaz_workplace'));
 
 echo $div;
 
-function _style($countBut = 2, $any = ''):string{
+function _style($countBut = 2, $any = ''): string
+{
     $out = 'style="';
     //40% - 8%
 

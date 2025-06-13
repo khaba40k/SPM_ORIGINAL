@@ -88,7 +88,7 @@ $fsHead(new HTEL('div', [
     $INPUT->GET('reqv'),
     new HTEL('label for=[0]/[2]'),
     new HTEL('div', [
-        new HTEL('input *=[1] !=[0] ?=[0] #=[3] $=[2] list=list_town [r]', [2=>"населений пункт, номер відділення"]),
+        new HTEL('input *=[1] !=[0] ?=[0] #=[3] $=[2] list=list_town [r]', [2 => "населений пункт, номер відділення"]),
         new HTEL('select !=NP_town'),
         new HTEL('datalist !=list_town'),
         new HTEL('select !=NP_vidd')
@@ -115,7 +115,7 @@ if ($INPUT->CLOSED)
         new HTEL('input *=[1] !=[0] ?=[0] #=[3]')
     ]));
 
-if ($INPUT->LOADED && $INPUT->GET('discount') != ""){
+if ($INPUT->LOADED && $INPUT->GET('discount') != "") {
     $fsHead(new HTEL('div', [
         "discount",
         "text",
@@ -124,8 +124,7 @@ if ($INPUT->LOADED && $INPUT->GET('discount') != ""){
         new HTEL('label for=[0]/[2]'),
         new HTEL('input *=[1] !=[0] ?=[0] #=[3] [ro]')
     ]));
-}
-else{
+} else {
     $fsHead(new HTEL('div', [
         "discount",
         "text",
@@ -180,7 +179,7 @@ $fsHead(new HTEL('div', [
     new HTEL('input *=[1] !=[0] #=[3] [4]')
 ]));
 
-if (!$INPUT->CLOSED){
+if (!$INPUT->CLOSED) {
 
     $clb = ($INPUT->GET('callback') == 1 || !$user) ? "" : "checked";
 
@@ -229,51 +228,51 @@ $COLORS = array();
 $color_read = $conn->SELECT('colors', 'ID, color, css_name', 'ORDER BY ID');
 
 foreach ($color_read as $c) {
-    $COLORS[$c['ID']] = ["name"=> "COLOR[" . $c['ID'] . "][" . $c['css_name'] . "]", "value"=> $c['color']];
+    $COLORS[$c['ID']] = ["name" => "COLOR[" . $c['ID'] . "][" . $c['css_name'] . "]", "value" => $c['color']];
 }
 
 $counter = 0;
 
 #region ЗАПОВНЕННЯ РОБОЧОГО МАСИВУ $SERVICES
 foreach ($result as $row) {
-        $SERVICES[$counter] = ["ID" => $row['ID'], "NAME" => $row['NAME'], "HAS_COLOR" => $row['color'], "SHOW" => inclAttr($atr, $row['atr'])];
+    $SERVICES[$counter] = ["ID" => $row['ID'], "NAME" => $row['NAME'], "HAS_COLOR" => $row['color'], "SHOW" => inclAttr($atr, $row['atr'])];
 
-        $types_read = $conn->SELECT('type_ids', 'type_ID, name', 'WHERE service_ID = ' . $row['ID'] . ' ORDER BY type_ID');
+    $types_read = $conn->SELECT('type_ids', 'type_ID, name', 'WHERE service_ID = ' . $row['ID'] . ' ORDER BY type_ID');
 
-        $color_read = $conn->SELECT('color_map', 'color_ID, type_ID', 'WHERE service_ID = ' . $row['ID'] . ' ORDER BY type_ID, color_ID');
+    $color_read = $conn->SELECT('color_map', 'color_ID, type_ID', 'WHERE service_ID = ' . $row['ID'] . ' ORDER BY type_ID, color_ID');
 
-        $cost_read = $conn->SELECT('price_list', 'type_id, cost', 'WHERE service_id = ' . $row['ID']);
+    $cost_read = $conn->SELECT('price_list', 'type_id, cost', 'WHERE service_id = ' . $row['ID']);
 
-        if (count($types_read) < 1) {
-            $types_read[0]['type_ID'] = 1;
-            $types_read[0]['name'] = '';
+    if (count($types_read) < 1) {
+        $types_read[0]['type_ID'] = 1;
+        $types_read[0]['name'] = '';
+    }
+
+    $types = array();
+
+    foreach ($types_read as $t) {
+        $colors = array();
+
+        foreach ($color_read as $c) {
+            if ($c['type_ID'] == $t['type_ID']) {
+                $colors[] = $c['color_ID'];
+            }
         }
 
-        $types = array();
+        $cost = 0;
 
-        foreach ($types_read as $t) {
-            $colors = array();
-
-            foreach ($color_read as $c) {
-                if ($c['type_ID'] == $t['type_ID']) {
-                    $colors[] = $c['color_ID'];
-                }
+        foreach ($cost_read as $cst) {
+            if ($cst['type_id'] == $t['type_ID']) {
+                $cost = $cst['cost'];
             }
-
-            $cost = 0;
-
-            foreach ($cost_read as $cst) {
-                if ($cst['type_id'] == $t['type_ID']) {
-                    $cost = $cst['cost'];
-                }
-            }
-
-            $types[$t['type_ID']] = ["TYPE" => $t['name'], "COST" => $cost, "COLORS" => $colors];
         }
 
-        $SERVICES[$counter]['TYPES'] = $types;
+        $types[$t['type_ID']] = ["TYPE" => $t['name'], "COST" => $cost, "COLORS" => $colors];
+    }
 
-        $counter++;
+    $SERVICES[$counter]['TYPES'] = $types;
+
+    $counter++;
 }
 #endregion
 
@@ -282,7 +281,7 @@ $workDIV = new HTEL('div !=work_body');
 $readOnlyPriceAtr = $INPUT->TYPE == ZType::DEFF_A ? 'readonly' : 'required';
 
 foreach ($SERVICES as $s) {
-    if ($s["SHOW"] == true){
+    if ($s["SHOW"] == true) {
         $POSL = $s['HAS_COLOR'] == 0 ? 'disabled' : '';
         $VARIANT = $s['HAS_COLOR'] == 1 ? 'checked' : '';
         $workDIV(new HTEL('div .=oneservice servID=[0]', [
@@ -362,7 +361,6 @@ echo new HTEL("div !=SELECT_INFO");
 ?>
 
 <script>
-
     var SERVICES = <?= json_encode($SERVICES) ?>
 
     var COLORS = <?= json_encode($COLORS) ?>
@@ -371,7 +369,7 @@ echo new HTEL("div !=SELECT_INFO");
 
     var DISCOUNT_IGNORE = <?= json_encode($INPUT->DISCOUNT_IGNORE) ?>
 
-        //NOVA POSHTA
+    //NOVA POSHTA
 
     var NP_INP = document.getElementById('reqv');
     var NP_DList = document.getElementById('list_town');
@@ -388,11 +386,9 @@ echo new HTEL("div !=SELECT_INFO");
         NP_WSelect,
         Loaded
     );
-
 </script>
 
 <script>
-
     var LAST_SELECTED_COLOR = -1;
 
     var DISCOUNT_KOEF = 1;
@@ -411,14 +407,14 @@ echo new HTEL("div !=SELECT_INFO");
         });
 
         if (INPUTSERVICES[19] !== undefined) {
-             $('.oneservice > input[VZ]').each((ind, inputYes) => {
-                 $.each(INPUTSERVICES[19], (servId, inf) => {
-                     if (inputYes.getAttribute('servID') == servId)
-                         inputYes.setAttribute('checked', true);
-                         $('input[name="cost[' + servId + ']"]').val(inf.costs);
-                     return;
-                 });
-             });
+            $('.oneservice > input[VZ]').each((ind, inputYes) => {
+                $.each(INPUTSERVICES[19], (servId, inf) => {
+                    if (inputYes.getAttribute('servID') == servId)
+                        inputYes.setAttribute('checked', true);
+                    $('input[name="cost[' + servId + ']"]').val(inf.costs);
+                    return;
+                });
+            });
         }
 
         $('.oneservice > input[value="yes"]').each((ind, inputYes) => {
@@ -431,8 +427,8 @@ echo new HTEL("div !=SELECT_INFO");
         AUTOSET_TIME = false;
     }
 
-    $('.oneservice').on('change', '> input[type=radio]', function () {
-         ADD_SERVICE(this);
+    $('.oneservice').on('change', '> input[type=radio]', function() {
+        ADD_SERVICE(this);
     });
 
     function ADD_SERVICE(inputYes) {
@@ -445,8 +441,7 @@ echo new HTEL("div !=SELECT_INFO");
 
         if (INPUTSERVICES[servID] === undefined || !AUTOSET_TIME) {
             priceInput.val($(inputYes).attr('price'));
-        }
-        else {
+        } else {
             priceInput.val(INPUTSERVICES[servID].costs);
         }
 
@@ -485,7 +480,7 @@ echo new HTEL("div !=SELECT_INFO");
             let hasTypes = true;
             let stylePodmenu = "style='grid-template-columns: 75% 25%;'";
 
-            $.each(SERVICES, function (ind, val) {
+            $.each(SERVICES, function(ind, val) {
                 if (val.ID === servID) {
 
                     innerOUT = "<div class='type_list'>";
@@ -493,7 +488,7 @@ echo new HTEL("div !=SELECT_INFO");
                     let atr = val.TYPES.length == 1 ? "checked" : "required";
                     let autoShowColor = false;
 
-                    $.each(val.TYPES, function (i, t) {
+                    $.each(val.TYPES, function(i, t) {
                         if ((val.HAS_COLOR == 1 && t.COLORS.length > 0) || val.HAS_COLOR == 0) {
                             if (INPUTSERVICES[servID] !== undefined && INPUTSERVICES[servID].type_ID == i) {
                                 atr = "checked";
@@ -502,9 +497,9 @@ echo new HTEL("div !=SELECT_INFO");
 
                             if (t.TYPE !== '') {
                                 innerOUT += "<input id='type_" + servID +
-                                     "_" + i + "' type='radio' value='" + i + "' name='type[" +
-                                     servID + "]' "+atr+"='' /><label for='type_" + servID + "_" + i + "'>" +
-                                     t.TYPE + "</label>";
+                                    "_" + i + "' type='radio' value='" + i + "' name='type[" +
+                                    servID + "]' " + atr + "='' /><label for='type_" + servID + "_" + i + "'>" +
+                                    t.TYPE + "</label>";
                             } else {
                                 hasTypes = false;
 
@@ -523,11 +518,10 @@ echo new HTEL("div !=SELECT_INFO");
                     if (val.HAS_COLOR == 1) {
                         if (hasTypes && !autoShowColor) {
                             innerOUT += "<div class='color_list' />";
-                        }
-                        else {
+                        } else {
                             innerOUT += "<div class='color_list'>" +
                                 ColorAppend(servID, INPUTSERVICES[servID] !== undefined ? INPUTSERVICES[servID].type_ID : 1,
-                                INPUTSERVICES[servID] !== undefined ? INPUTSERVICES[servID].color : -1) + "</div>";
+                                    INPUTSERVICES[servID] !== undefined ? INPUTSERVICES[servID].color : -1) + "</div>";
                         }
                     } else {
                         stylePodmenu = "style='grid-template-columns: 100%;'";
@@ -537,14 +531,14 @@ echo new HTEL("div !=SELECT_INFO");
                 }
             });
 
-            $(inputYes).parent().append(HTEL.FORMAT('<div class="podmenu" '
-                + stylePodmenu + ' servID="' + servID + '" id="menu_' + servID + '">' + innerOUT + '</div>', 5));
+            $(inputYes).parent().append(HTEL.FORMAT('<div class="podmenu" ' +
+                stylePodmenu + ' servID="' + servID + '" id="menu_' + servID + '">' + innerOUT + '</div>', 5));
         }
 
         PRE_SUM_SHOW();
     }
 
-    $('#bodyFS').on('change', '.type_list input[type=radio]', function () {
+    $('#bodyFS').on('change', '.type_list input[type=radio]', function() {
         ADD_COLOR_LIST(this);
     });
 
@@ -569,28 +563,33 @@ echo new HTEL("div !=SELECT_INFO");
         PRE_SUM_SHOW();
     }
 
-    $('#bodyFS').on('change', '.color_list input[type=radio]', function () {
+    $('#bodyFS').on('change', '.color_list input[type=radio]', function() {
         LAST_SELECTED_COLOR = $(this).val();
     });
 
     function ColorAppend(_servID, _servType = 1, _colorID = -1) {
         let _out = "";
 
-        let get_color_name = function (id, css = false) {
+        let get_color_name = function(id, css = false) {
             let out = "";
 
-            $.each(COLORS, (ind, col) => { if (ind == id) { out = (css ? col.name.match(/#[\w\d]+/) : col.value); return; } });
+            $.each(COLORS, (ind, col) => {
+                if (ind == id) {
+                    out = (css ? col.name.match(/#[\w\d]+/) : col.value);
+                    return;
+                }
+            });
 
             return out;
         };
 
-        $.each(SERVICES, function (ind, val) {
+        $.each(SERVICES, function(ind, val) {
             if (val.ID === _servID) {
 
                 let atr = val.TYPES[_servType].COLORS.length == 1 ? "checked" : "required";
                 let tempAtr = "";
 
-                $.each(val.TYPES[_servType].COLORS, function (i, v) {
+                $.each(val.TYPES[_servType].COLORS, function(i, v) {
                     if (_colorID == v || (LAST_SELECTED_COLOR == v && _colorID == -1)) {
                         tempAtr = "checked";
                     } else {
@@ -600,7 +599,7 @@ echo new HTEL("div !=SELECT_INFO");
                     _out += '<input type="radio" id="color_' + _servID + '_' + i +
                         '" name="color[' + _servID + ']" value="' + v +
                         '" ' + tempAtr + '="" /><label for="color_' + _servID +
-                        '_' + i + '" style="border-left: solid 10px;border-color:'+get_color_name(v, true)+';">' + get_color_name(v) + '</label>';
+                        '_' + i + '" style="border-left: solid 10px;border-color:' + get_color_name(v, true) + ';">' + get_color_name(v) + '</label>';
                 });
 
                 return;
@@ -631,7 +630,7 @@ echo new HTEL("div !=SELECT_INFO");
                 Cost = $.find(':input[type=number]', srv)[0].value * DISCOUNT_KOEF;
 
                 if (IsYes[0].value != "no" && ($.find(':input[name*="type["]:checked', srv).length > 0 || $.find(':input[VZ]:checked', srv).length > 0)) {
-                      out += Cost;
+                    out += Cost;
                 }
             }
         });
@@ -646,13 +645,15 @@ echo new HTEL("div !=SELECT_INFO");
 
         let vidZamovn_arr = $('#bodyFS input[VZ]:checked').serializeArray();
 
-        $.each(vidZamovn_arr, (ind, line) => { line.name = "type[19]" });
+        $.each(vidZamovn_arr, (ind, line) => {
+            line.name = "type[19]"
+        });
 
         type_arr = type_arr.concat(vidZamovn_arr);
-        
+
         let counter = 0;
 
-        let GET_SERVICE_NAME = function (index, type = -1) {
+        let GET_SERVICE_NAME = function(index, type = -1) {
             let out = "";
 
             if (type == -1 && index != 19) {
@@ -690,18 +691,41 @@ echo new HTEL("div !=SELECT_INFO");
         }
 
         if ($('#terminovo').prop('checked')) {
-            OUT.push({ name: "SERVICES[" + counter + "][ID]", value: 21 });
-            OUT.push({ name: "SERVICES[" + counter + "][NAME]", value: GET_SERVICE_NAME(21) });
-            OUT.push({ name: "SERVICES[" + counter + "][TYPE][ID]", value: 1 });
-            OUT.push({ name: "SERVICES[" + counter + "][TYPE][NAME]", value: "" });
-            OUT.push({ name: "SERVICES[" + counter + "][COLOR][ID]", value: null });
-            OUT.push({ name: "SERVICES[" + counter + "][COLOR][NAME]", value: null });
-            OUT.push({ name: "SERVICES[" + counter + "][COST]", value: $('#terminovo').val() });
+            OUT.push({
+                name: "SERVICES[" + counter + "][ID]",
+                value: 21
+            });
+            OUT.push({
+                name: "SERVICES[" + counter + "][NAME]",
+                value: GET_SERVICE_NAME(21)
+            });
+            OUT.push({
+                name: "SERVICES[" + counter + "][TYPE][ID]",
+                value: 1
+            });
+            OUT.push({
+                name: "SERVICES[" + counter + "][TYPE][NAME]",
+                value: ""
+            });
+            OUT.push({
+                name: "SERVICES[" + counter + "][COLOR][ID]",
+                value: null
+            });
+            OUT.push({
+                name: "SERVICES[" + counter + "][COLOR][NAME]",
+                value: null
+            });
+            OUT.push({
+                name: "SERVICES[" + counter + "][COST]",
+                value: $('#terminovo').val()
+            });
 
             counter++;
         }
 
-        let serv_ind = 0; let serv_ind_19 = 0; let checkedColorInp = null;
+        let serv_ind = 0;
+        let serv_ind_19 = 0;
+        let checkedColorInp = null;
 
         $.each(type_arr, (ind, type) => {
 
@@ -710,33 +734,78 @@ echo new HTEL("div !=SELECT_INFO");
 
             if (serv_ind == 19) serv_ind_19 = type.value;
 
-            OUT.push({ name: "SERVICES[" + counter + "][ID]", value: serv_ind });
-            OUT.push({ name: "SERVICES[" + counter + "][NAME]", value: GET_SERVICE_NAME(serv_ind) });
-            OUT.push({ name: "SERVICES[" + counter + "][TYPE][ID]", value: type.value });
-            OUT.push({ name: "SERVICES[" + counter + "][TYPE][NAME]", value: GET_SERVICE_NAME(serv_ind, type.value) });
+            OUT.push({
+                name: "SERVICES[" + counter + "][ID]",
+                value: serv_ind
+            });
+            OUT.push({
+                name: "SERVICES[" + counter + "][NAME]",
+                value: GET_SERVICE_NAME(serv_ind)
+            });
+            OUT.push({
+                name: "SERVICES[" + counter + "][TYPE][ID]",
+                value: type.value
+            });
+            OUT.push({
+                name: "SERVICES[" + counter + "][TYPE][NAME]",
+                value: GET_SERVICE_NAME(serv_ind, type.value)
+            });
             checkedColorInp = $("input[name='color[" + serv_ind + "]']:checked");
-            OUT.push({ name: "SERVICES[" + counter + "][COLOR][ID]", value: checkedColorInp.val() });
-            OUT.push({ name: "SERVICES[" + counter + "][COLOR][NAME]", value: $("label[for='" + checkedColorInp.attr("id") + "']").text().trim() });
-            OUT.push({ name: "SERVICES[" + counter + "][COST]", value: $("input[name='cost[" + serv_ind_19 + "]']").val() });
+            OUT.push({
+                name: "SERVICES[" + counter + "][COLOR][ID]",
+                value: checkedColorInp.val()
+            });
+            OUT.push({
+                name: "SERVICES[" + counter + "][COLOR][NAME]",
+                value: $("label[for='" + checkedColorInp.attr("id") + "']").text().trim()
+            });
+            OUT.push({
+                name: "SERVICES[" + counter + "][COST]",
+                value: $("input[name='cost[" + serv_ind_19 + "]']").val()
+            });
 
             counter++;
         });
 
         if (onlyService) {
-            return [{ name: "dKoef", value: DISCOUNT_KOEF }].concat(COLORS.concat(OUT));
+            return [{
+                name: "dKoef",
+                value: DISCOUNT_KOEF
+            }].concat(COLORS.concat(OUT));
         } else {
-            let TEMP_ARR = [{ name: "ID", value: LoadedID }];
+            let TEMP_ARR = [{
+                name: "ID",
+                value: LoadedID
+            }];
 
             if ($('#callback').prop('checked') != undefined && $('#callback').prop('checked')) {
-                TEMP_ARR.push({ name: "callback", value: 0 });
+                TEMP_ARR.push({
+                    name: "callback",
+                    value: 0
+                });
             } else {
-                TEMP_ARR.push({ name: "callback", value: 1 });
+                TEMP_ARR.push({
+                    name: "callback",
+                    value: 1
+                });
             }
 
-            TEMP_ARR.push({ name: "redaktor", value: $('#redaktor').val() });
-            TEMP_ARR.push({ name: "worker", value: $('#worker').val() });
-            TEMP_ARR.push({ name: "ZTYPE", value: "DEFF" });
-            TEMP_ARR.push({ name: "DISCOUNT_IGNORE", value: DISCOUNT_IGNORE });
+            TEMP_ARR.push({
+                name: "redaktor",
+                value: $('#redaktor').val()
+            });
+            TEMP_ARR.push({
+                name: "worker",
+                value: $('#worker').val()
+            });
+            TEMP_ARR.push({
+                name: "ZTYPE",
+                value: "DEFF"
+            });
+            TEMP_ARR.push({
+                name: "DISCOUNT_IGNORE",
+                value: DISCOUNT_IGNORE
+            });
 
             return TEMP_ARR.concat($('#headFS').serializeArray().concat(OUT));
         }
@@ -781,23 +850,23 @@ echo new HTEL("div !=SELECT_INFO");
 
         $("#SELECT_INFO").css("visibility", "visible");
     }
-
 </script>
 
 <style>
-
-    fieldset, #bott {
+    fieldset,
+    #bott {
         margin: 20px 1% 0 1%;
         width: 98%;
         max-width: 98%;
         padding: 20px;
     }
 
-    #headFS input[type=datetime-local], #headFS input[type=date] {
+    #headFS input[type=datetime-local],
+    #headFS input[type=date] {
         width: auto;
     }
 
-    #headFS > div {
+    #headFS>div {
         position: relative;
         width: 100%;
         max-width: 100%;
@@ -812,7 +881,7 @@ echo new HTEL("div !=SELECT_INFO");
         height: 25px;
     }
 
-    #headFS > div > div {
+    #headFS>div>div {
         position: relative;
         border: solid 2px black;
         border-radius: 5px;
@@ -820,13 +889,13 @@ echo new HTEL("div !=SELECT_INFO");
         max-width: 100%;
     }
 
-        #headFS > div > div > * {
-            position: static;
-            min-height: 25px;
-            width: 100%;
-        }
+    #headFS>div>div>* {
+        position: static;
+        min-height: 25px;
+        width: 100%;
+    }
 
-    #headFS > div >:last-child {
+    #headFS>div>:last-child {
         display: grid;
         grid-template-columns: 100%;
         grid-row-gap: 6px;
@@ -876,17 +945,17 @@ echo new HTEL("div !=SELECT_INFO");
         box-shadow: -10px -10px 5px rgb(52, 52, 52, 0.79);
     }
 
-    #SELECT_INFO > span {
-         padding: 0 3px;
+    #SELECT_INFO>span {
+        padding: 0 3px;
     }
 
-        @media screen and (max-width: 750px) {
-            #bodyFS > div * {
-                font-size: 10px;
-            }
+    @media screen and (max-width: 750px) {
+        #bodyFS>div * {
+            font-size: 10px;
         }
+    }
 
-        #bodyFS input[type=radio] {
+    #bodyFS input[type=radio] {
         width: 1px;
         height: 1px;
         color: transparent;
@@ -903,45 +972,45 @@ echo new HTEL("div !=SELECT_INFO");
         padding-bottom: 5px;
     }
 
-        .oneservice:first-child {
-            word-wrap: break-word;
-        }
+    .oneservice:first-child {
+        word-wrap: break-word;
+    }
 
-        .oneservice input[type=radio][id$="_no"]:checked + label {
-            background-color: red;
-            border-color: red;
-            color: white;
-        }
+    .oneservice input[type=radio][id$="_no"]:checked+label {
+        background-color: red;
+        border-color: red;
+        color: white;
+    }
 
-        .oneservice input[type=radio]:not([id$="_no"]):checked + label {
-            background-color: green;
-            color: white;
-        }
+    .oneservice input[type=radio]:not([id$="_no"]):checked+label {
+        background-color: green;
+        color: white;
+    }
 
-        .oneservice input[type=radio] + label {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: white;
-            border: solid 3px green;
-            border-radius: 5px;
-            margin: 0 2px;
-            cursor: pointer;
-        }
+    .oneservice input[type=radio]+label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: white;
+        border: solid 3px green;
+        border-radius: 5px;
+        margin: 0 2px;
+        cursor: pointer;
+    }
 
-        .oneservice input[type=radio]:disabled + label {
-            background: none;
-            border: none;
-            color: transparent;
-            cursor: default;
-        }
+    .oneservice input[type=radio]:disabled+label {
+        background: none;
+        border: none;
+        color: transparent;
+        cursor: default;
+    }
 
-        .oneservice input[type=number] {
-            background: none;
-            text-align: right;
-            border: none;
-            color: blue;
-        }
+    .oneservice input[type=number] {
+        background: none;
+        text-align: right;
+        border: none;
+        color: blue;
+    }
 
     .podmenu {
         margin-top: 20px;
@@ -950,11 +1019,11 @@ echo new HTEL("div !=SELECT_INFO");
         grid-column: 1 / 9;
     }
 
-        .podmenu >:first-child {
-            display: grid;
-            grid-template-columns: 0 100%;
-            row-gap: 2px;
-        }
+    .podmenu>:first-child {
+        display: grid;
+        grid-template-columns: 0 100%;
+        row-gap: 2px;
+    }
 
     .color_list {
         display: grid;
@@ -971,16 +1040,18 @@ echo new HTEL("div !=SELECT_INFO");
         align-items: center;
     }
 
-        #bott input, #bott select {
-            border: dotted 3px #b37474;
-            border-radius: 5px;
-            color: green;
-            font-weight: bold;
-            background-color: darkgray;
-        }
+    #bott input,
+    #bott select {
+        border: dotted 3px #b37474;
+        border-radius: 5px;
+        color: green;
+        font-weight: bold;
+        background-color: darkgray;
+    }
 
-        #bott input, #bott > div, #bott button {
-            max-width: 30%;
-        }
-
+    #bott input,
+    #bott>div,
+    #bott button {
+        max-width: 30%;
+    }
 </style>

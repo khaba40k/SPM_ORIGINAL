@@ -9,13 +9,13 @@ $result = $conn('SELECT login FROM users');
 
 $users = array();
 
-foreach($result as $row){
+foreach ($result as $row) {
     $users[] = $row['login'];
 }
 
 $_GET['type'] = $_GET['type'] ?? 'archiv';
 
-if (!isset($_GET['search']) || trim($_GET['search']) == ''){
+if (!isset($_GET['search']) || trim($_GET['search']) == '') {
 
     switch ($_GET['type']) {
         case 'new':
@@ -36,16 +36,17 @@ if (!isset($_GET['search']) || trim($_GET['search']) == ''){
             ]);
 
             $query = 'SELECT * FROM client_info where
-            date_out >= '. $done_period[0] . ' AND date_out < '. $done_period[1] . '
+            date_out >= ' . $done_period[0] . ' AND date_out < ' . $done_period[1] . '
             ORDER BY `date_out` DESC';
             break;
     }
-
-}else{
+} else {
     $srch = '"%' . $_GET['search'] . '%" ';
 
-    echo new HTEL('label &=margin-bottom:10px;padding:5px+10px;width:100%;font-size:120%;text-weight:bold;/РЕЗУЛЬТАТИ ПОШУКУ: "[0]"',
-    $_GET['search']);
+    echo new HTEL(
+        'label &=margin-bottom:10px;padding:5px+10px;width:100%;font-size:120%;text-weight:bold;/РЕЗУЛЬТАТИ ПОШУКУ: "[0]"',
+        $_GET['search']
+    );
 
     $query = 'SELECT * FROM `client_info` where
     `phone` LIKE ' . $srch . '
@@ -100,7 +101,8 @@ function _getPeriod($in = null): array //in = ~ 10.2023 or null
     return $out;
 }
 
-function _perNext($in):string{
+function _perNext($in): string
+{
     $spl = explode('.', $in);
 
     $month = $spl[0];
@@ -133,7 +135,8 @@ function _perPrev($in): string
     return $month . '.' . $year;
 }
 
-function _ukrPeriod($in):string{
+function _ukrPeriod($in): string
+{
     $mounts = [
         1 => 'січень',
         'лютий',
@@ -163,13 +166,13 @@ session_start();
 
 $counter = count($result);
 
-if ($_GET['type'] == 'archiv' && $counter > 0){
+if ($_GET['type'] == 'archiv' && $counter > 0) {
     echo 'ЗАПИСІВ: [ ' . $counter . ' ]<br>';
 }
 
 $date_max_last = date('Y-m-d');
 
-if ($counter > 0){
+if ($counter > 0) {
     foreach ($result as $row) {
         $counter++;
 
@@ -210,8 +213,8 @@ if ($counter > 0){
         }
 
         $style .= 'background:' . ($variant == 'def' ?
-        "linear-gradient(to left, yellow, rgba(255, 255, 255, 0.50));" :
-        "linear-gradient(to left, lightgray, rgba(255, 255, 255, 0.50));");
+            "linear-gradient(to left, yellow, rgba(255, 255, 255, 0.50));" :
+            "linear-gradient(to left, lightgray, rgba(255, 255, 255, 0.50));");
 
         $pip = explode(' ', trim($row['client_name']));
 
@@ -221,10 +224,12 @@ if ($counter > 0){
             $pip_out .= ' ' . mb_substr($pip[$i], 0, 1) . '.';
         }
 
-        if ($_GET['type'] == 'new' && $date_max_last !== null && $row['date_max'] < $date_max_last){
+        if ($_GET['type'] == 'new' && $date_max_last !== null && $row['date_max'] < $date_max_last) {
             $date_max_last = null;
-            echo new HTEL('div &=display:flex;justify-content:center;align-items:center;height:50px;background:linear-gradient(to+bottom,white,red);border-top-left-radius:40px;border-top-right-radius:40px;margin-top:30px;margin-bottom:10px;',
-            new HTEL('label &=color:white;font-size:150%;font-weight:bold;/ТЕРМІН ВИЙШОВ'));
+            echo new HTEL(
+                'div &=display:flex;justify-content:center;align-items:center;height:50px;background:linear-gradient(to+bottom,white,red);border-top-left-radius:40px;border-top-right-radius:40px;margin-top:30px;margin-bottom:10px;',
+                new HTEL('label &=color:white;font-size:150%;font-weight:bold;/ТЕРМІН ВИЙШОВ')
+            );
         }
 
         $phone_number = getCorrectPhone($row['phone']);
@@ -271,7 +276,7 @@ if ($counter > 0){
 
         $div_buttons = new HTEL('div .=buttons');
 
-        if (strlen($phone_number) >=10 && is_numeric($phone_number) && $_SESSION[$_SESSION['logged']] <= 1){
+        if (strlen($phone_number) >= 10 && is_numeric($phone_number) && $_SESSION[$_SESSION['logged']] <= 1) {
             $div_buttons(new HTEL('button *=button .=but_sms'));
         }
 
@@ -305,29 +310,30 @@ if ($counter > 0){
 
         echo $div;
     }
-}
-else {
+} else {
     echo 'ЗАПИСІВ НЕ ЗНАЙДЕНО !';
 }
 
 $conn->close();
 
-function classFromCreator($creator):string{
+function classFromCreator($creator): string
+{
     $us = $GLOBALS['users'];
 
-    if (!in_array($creator, $us)){
+    if (!in_array($creator, $us)) {
         return 'customcreator';
     }
 
     return '';
 }
-function getCorrectPhone(string $in, $kodKr = false):string{
+function getCorrectPhone(string $in, $kodKr = false): string
+{
     $out = '';
 
     $split = str_split($in);
 
-    foreach($split as $s){
-        if (is_numeric($s)){
+    foreach ($split as $s) {
+        if (is_numeric($s)) {
             $out .= $s;
         }
     }
@@ -347,81 +353,81 @@ function getCorrectPhone(string $in, $kodKr = false):string{
 
 <script>
     function printInfo($in, $hide = 0, $type = 'activ', $var = 'def') {
+        $.ajax({
+            url: 'blok/z_list/print_to_work.php',
+            method: 'GET',
+            dataType: 'html',
+            data: 'ID=' + $in + '&hideForWorker=' + $hide + '&type=' + $type + '&variant=' + $var,
+            success: function(data) {
+                $('#workfield').html(data);
+            }
+        });
+    };
+
+    //Редагувати заявку
+
+    function changeInfo($in, $var = 'def') {
+        if ($var == 'def') {
             $.ajax({
-                url: 'blok/z_list/print_to_work.php',
+                url: 'blok/z_create/create_DEF.php',
                 method: 'GET',
                 dataType: 'html',
-                data: 'ID=' + $in + '&hideForWorker=' + $hide + '&type=' + $type + '&variant=' + $var,
+                data: 'ID=' + $in,
                 success: function(data) {
-                      $('#workfield').html(data);
+                    $('#workfield').html(data);
                 }
-                });
-    };
+            });
+        } else {
+            $.ajax({
+                url: 'blok/z_create/new_Z.php',
+                method: 'GET',
+                dataType: 'html',
+                data: 'ID=' + $in + '&type=' + $var,
+                success: function(data) {
+                    $('#workfield').html(data);
+                }
+            });
+        }
 
-     //Редагувати заявку
-
-     function changeInfo($in, $var = 'def') {
-         if ($var == 'def') {
-              $.ajax({
-                      url: 'blok/z_create/create_DEF.php',
-                      method: 'GET',
-                      dataType: 'html',
-                      data: 'ID=' + $in,
-                      success: function (data) {
-                          $('#workfield').html(data);
-                      }
-              });
-         } else{
-              $.ajax({
-                      url: 'blok/z_create/new_Z.php',
-                      method: 'GET',
-                      dataType: 'html',
-                      data: 'ID=' + $in+ '&type=' + $var,
-                      success: function (data) {
-                          $('#workfield').html(data);
-                      }
-              });
-         }
-
-     }
+    }
 
     function removeInfo($in, $num) {
-         if ($num == null) $num = '';
+        if ($num == null) $num = '';
 
-         if (confirm('Підтвердіть видалення даних по шолому '  + $num)) {
-             $.ajax({
-                 url: 'blok/z_list/remowe_info.php',
-                 method: 'GET',
-                 dataType: 'html',
-                 data: 'ID=' + $in,
-                 success: function (data) {
-                     $('#workfield').html(data);
-                 }
-             });
-         };
+        if (confirm('Підтвердіть видалення даних по шолому ' + $num)) {
+            $.ajax({
+                url: 'blok/z_list/remowe_info.php',
+                method: 'GET',
+                dataType: 'html',
+                data: 'ID=' + $in,
+                success: function(data) {
+                    $('#workfield').html(data);
+                }
+            });
+        };
     };
 
-    $('.activeZ').on('mouseenter', function (e) {
+    $('.activeZ').on('mouseenter', function(e) {
         var $this = $(this).find('.buttons');
 
-        var timeout = setTimeout(function () {
+        var timeout = setTimeout(function() {
             $('.buttons').not($this).removeClass('show_podmenu');
             $this.toggleClass("show_podmenu");
         }, 500);
 
-        $(e.target).one('mouseleave', function () {
+        $(e.target).one('mouseleave', function() {
             clearTimeout(timeout);
         });
     });
 
-    $('.activeZ').on('mouseleave', function (e) {
+    $('.activeZ').on('mouseleave', function(e) {
         var $this = $(this).find('.buttons');
         $this.removeClass('show_podmenu');
     });
 
     //ВІДПРАВКА ОСОБИСТИХ СМС
 
-    $('.activeZ').on('click', '.but_sms', function (e) {
+    $('.activeZ').on('click', '.but_sms', function(e) {
         $(document).find("textarea#qsms").remove();
         $(document).find("span.span_ans").remove();
         $('.but_send_sms').toggleClass('but_sms');
@@ -433,7 +439,7 @@ function getCorrectPhone(string $in, $kodKr = false):string{
         $(this).parent().prepend('<textarea id="qsms" name="qsms" placeholder="текст повідомлення..."></textarea>');
     });
 
-    $('.activeZ').on('click', '.but_send_sms', function (e) {
+    $('.activeZ').on('click', '.but_send_sms', function(e) {
         var _tel = $(this).parent().parent().find("label.mobtel").text().trim();
         var _rec = $(this).parent().parent().find("label.receiver").text().trim();
         var _mes = $(this).parent().find("textarea#qsms").val().trim();
@@ -448,10 +454,13 @@ function getCorrectPhone(string $in, $kodKr = false):string{
             return;
         }
 
-        $.post('blok/sms/sms_send.php', {mes: _mes, tel: _tel, rec: _rec}, function (result) {
+        $.post('blok/sms/sms_send.php', {
+            mes: _mes,
+            tel: _tel,
+            rec: _rec
+        }, function(result) {
             alert(result);
         });
 
     });
 </script>
-
