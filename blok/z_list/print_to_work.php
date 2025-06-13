@@ -84,7 +84,7 @@ if (count($result) == 1){
         new HTEL('td &=text-align:center colspan=4/КОМПЛЕКТУЮЧІ')
     ]));
 
-    if (!empty($cl_info['comm']))
+    if (!empty($cl_info['comm']) && $TYPE_Z != "archiv")
     $tBody(new HTEL('tr', [
         new HTEL('td &=text-align:center;font-weight:bold colspan=4/[0]', $cl_info['comm'])
     ]));
