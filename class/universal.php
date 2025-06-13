@@ -2,17 +2,19 @@
 ini_set('session.gc_maxlifetime', 3600);
 session_set_cookie_params(3600);
 
-function  HIDE(){
-     if (!isset($_SESSION['logged'])){
-       session_start();
-     }
-     if ($_SESSION['logged'] != 'Administrator'){
-           echo 'ТИМЧАСОВО НЕ ДОСТУПНО... СТОРІНКА В РОЗРОБЦІ!';
-           exit;
-     }
+function  HIDE()
+{
+    if (!isset($_SESSION['logged'])) {
+        session_start();
+    }
+    if ($_SESSION['logged'] != 'Administrator') {
+        echo 'ТИМЧАСОВО НЕ ДОСТУПНО... СТОРІНКА В РОЗРОБЦІ!';
+        exit;
+    }
 }
 
-class SQLconn{
+class SQLconn
+{
 
     private $CONN;
     private $host = '127.0.0.1';
@@ -22,24 +24,27 @@ class SQLconn{
     private $password = 'R[$cB{&A5n]$';
     private $QUERYANS = null;
 
-    function __construct($query = '', $keepAlive = false){
+    function __construct($query = '', $keepAlive = false)
+    {
         $this->connect();
 
-        if (!empty($query)){
+        if (!empty($query)) {
             $this->QUERYANS = $this->query($query, $keepAlive);
         }
     }
 
-    private function connect(){
+    private function connect()
+    {
         $this->CONN = mysqli_connect($this->host, $this->user, $this->password, $this->database);
 
         mysqli_query($this->CONN, "SET collation_connection = utf8_general_ci");
         mysqli_query($this->CONN, "SET NAMES utf8");
     }
 
-    function query($q = '', $keepAlive = true){
+    function query($q = '', $keepAlive = true)
+    {
         $this->QUERYANS = null;
-        
+
         $result = mysqli_query($this->CONN, $q);
 
         if ($result === true) return true;
@@ -50,59 +55,61 @@ class SQLconn{
 
         $out_arr = array();
 
-        if (mysqli_num_rows($result) > 0){
-            foreach ($result as $row){
+        if (mysqli_num_rows($result) > 0) {
+            foreach ($result as $row) {
                 $out_arr[] = $row;
             }
         }
 
         if (!$keepAlive) $this->close();
-        
-        $this->QUERYANS = $out_arr;  
-  
+
+        $this->QUERYANS = $out_arr;
+
         return $out_arr;
     }
 
-    function SELECT_DB($fields = "*", $q_end = ""){
+    function SELECT_DB($fields = "*", $q_end = "")
+    {
         if (!empty($this->DB)) {
             return $this->SELECT($this->DB, $fields, $q_end);
-        }else{
+        } else {
             return [];
         }
     }
 
-    function SELECT($database, $fields = '*', $q_end = ''):array{
+    function SELECT($database, $fields = '*', $q_end = ''): array
+    {
         $this->DB = $database;
 
-        $flds = ''; $fieldArr = array();
+        $flds = '';
+        $fieldArr = array();
 
-        if (!is_array($fields)){
-				if ($fields != '*'){
-					$separator = " ";
+        if (!is_array($fields)) {
+            if ($fields != '*') {
+                $separator = " ";
 
-					if (strpos($fields, ",") > 0){
-						$separator = ",";
-					}
+                if (strpos($fields, ",") > 0) {
+                    $separator = ",";
+                }
 
-					$tmpArr = array();
-					$tmpArr = explode($separator, trim($fields));
+                $tmpArr = array();
+                $tmpArr = explode($separator, trim($fields));
 
-					foreach ($tmpArr as $v){
-             	   		if (!empty($v)){
-             	       	$fieldArr[] = "`" . str_replace("`", "", trim($v)) . "`";
-             	   		}
-					}
-				}else{
-					$fieldArr[] = '*';
-				}
-           
-        } else{
-             foreach ($fields as $f){
-                 $fieldArr[] = "`" . str_replace("`", "", trim($f)) . "`";
-             }
+                foreach ($tmpArr as $v) {
+                    if (!empty($v)) {
+                        $fieldArr[] = "`" . str_replace("`", "", trim($v)) . "`";
+                    }
+                }
+            } else {
+                $fieldArr[] = '*';
+            }
+        } else {
+            foreach ($fields as $f) {
+                $fieldArr[] = "`" . str_replace("`", "", trim($f)) . "`";
+            }
         }
 
-        foreach ($fieldArr as $f){
+        foreach ($fieldArr as $f) {
             $flds .= trim($f) . " ";
         }
 
@@ -113,7 +120,8 @@ class SQLconn{
         return $this->query($q);
     }
 
-    function INSERT_DB(array $values, $OD_UPD_KEY = 1, $q_end = ''){
+    function INSERT_DB(array $values, $OD_UPD_KEY = 1, $q_end = '')
+    {
         if (!empty($this->DB)) {
             $this->INSERT($this->DB, $values, $OD_UPD_KEY, $q_end);
             return true;
@@ -122,15 +130,17 @@ class SQLconn{
         }
     }
 
-    function INSERT($database, array $values, $OD_UPD_KEY = 1, $q_end = ''){
+    function INSERT($database, array $values, $OD_UPD_KEY = 1, $q_end = '')
+    {
         $this->DB = $database;
 
         $q = "INSERT INTO `" . $database . "` ";
-        $keys = ""; $vals = "";
- 
+        $keys = "";
+        $vals = "";
+
         $this->ArrayToCorrect($values);
 
-        foreach ($values as $k=>$v){
+        foreach ($values as $k => $v) {
             $keys .= $k . ", ";
             $vals .= $v . ", ";
         }
@@ -140,7 +150,7 @@ class SQLconn{
 
         $q .= $keys . $vals;
 
-        if ($OD_UPD_KEY == 1){
+        if ($OD_UPD_KEY == 1) {
 
             $dublicate_id = $this->query('show columns from `' . $database . '` where `KEY` = "PRI"');
 
@@ -163,18 +173,20 @@ class SQLconn{
         $this->query($q . " " . trim($q_end));
     }
 
-    private function OutSqlVal($_in){
+    private function OutSqlVal($_in)
+    {
         if ($_in === null)
             $_in = "NULL";
 
-         if (is_numeric($_in) || $_in == "NULL"){
+        if (is_numeric($_in) || $_in == "NULL") {
             return $_in;
-         }else{
+        } else {
             return "\"" . $_in . "\"";
-         }
+        }
     }
 
-    function UPDATE_DB(array $values, $q_end = ''){
+    function UPDATE_DB(array $values, $q_end = '')
+    {
         if (!empty($this->DB)) {
             $this->UPDATE($this->DB, $values, $q_end);
             return true;
@@ -183,7 +195,8 @@ class SQLconn{
         }
     }
 
-    function UPDATE($database, array $values, $q_end = ''){
+    function UPDATE($database, array $values, $q_end = '')
+    {
         $this->DB = $database;
 
         $q = 'UPDATE `' . $database . '` SET ';
@@ -191,8 +204,8 @@ class SQLconn{
 
         $this->ArrayToCorrect($values);
 
-        foreach ($values as $k=>$v){
-                $tmp .= $k . " = " . $v . ", ";
+        foreach ($values as $k => $v) {
+            $tmp .= $k . " = " . $v . ", ";
         }
 
         $q .= substr(trim($tmp), 0, strlen($tmp) - 2);
@@ -200,7 +213,8 @@ class SQLconn{
         $this->query($q . " " . trim($q_end));
     }
 
-    function DELETE_FROM_DB($where){
+    function DELETE_FROM_DB($where)
+    {
         if (!empty($this->DB)) {
             $this->DELETE($this->DB, $where);
             return true;
@@ -209,7 +223,8 @@ class SQLconn{
         }
     }
 
-    function DELETE($database, $where){
+    function DELETE($database, $where)
+    {
         $this->DB = $database;
 
         $q = 'DELETE FROM `' . $database . '` WHERE ' . trim(str_ireplace("WHERE", "", $where));
@@ -217,7 +232,8 @@ class SQLconn{
         $this->query($q);
     }
 
-    function CLEAR_DB(){
+    function CLEAR_DB()
+    {
         if (!empty($this->DB)) {
             $this->CLEAR($this->DB);
             return true;
@@ -226,107 +242,113 @@ class SQLconn{
         }
     }
 
-    function CLEAR($database){
+    function CLEAR($database)
+    {
         $this->DB = $database;
 
         $q = 'DELETE FROM `' . $database . '`';
         $this->query($q);
     }
 
-    function ArrayToCorrect(& $inputArr){
-        
+    function ArrayToCorrect(&$inputArr)
+    {
+
         if (!is_array($inputArr)) return false;
 
         $out = array();
 
         $tmp = '';
 
-        foreach ($inputArr as $k=>$v){
-            if ($v !== null && $v !== "NULL"){
-                if (!is_numeric($v)){                  
+        foreach ($inputArr as $k => $v) {
+            if ($v !== null && $v !== "NULL") {
+                if (!is_numeric($v)) {
                     $tmp = str_replace("`", "'", $v);
                     $tmp = str_replace('"', '\"', $tmp);
 
                     $out["`" . $k . "`"] = "\"" . $tmp . "\"";
-                }else{
+                } else {
                     $out["`" . $k . "`"] = "\"" . $v . "\"";
                 }
-            }else{
+            } else {
                 $out["`" . $k . "`"] = 'NULL';
             }
         }
-        
+
         $inputArr = $out;
     }
-    
-    function TABLE($query = ''): HTEL{
-          if (!empty($query)){
-				$this->query($query);
-			}
 
-          if ($this->QUERYANS === null || !is_array($this->QUERYANS) || count($this->QUERYANS) == 0) 
-                 return new HTEL('table .=query_ans_table' , [new HTEL('tbody', new HTEL('th/empty'))]);
+    function TABLE($query = ''): HTEL
+    {
+        if (!empty($query)) {
+            $this->query($query);
+        }
 
-          $arr = $this->QUERYANS;
-         
-			$cells = array();
-			
-          foreach ($arr as $row){
-				foreach ($row as $col=>$val){
-						$cells[$col][] = new HTEL('td/[0]', $val);
-				}
-          }
+        if ($this->QUERYANS === null || !is_array($this->QUERYANS) || count($this->QUERYANS) == 0)
+            return new HTEL('table .=query_ans_table', [new HTEL('tbody', new HTEL('th/empty'))]);
 
-			$tbody =new HTEL('tbody');
-			
-			$rows = array();
-			
-			$tr_head = new HTEL('tr');
-			
-			$tr = array();
-			
-			$counter = 0;
-			
-			foreach ($cells as $col=>$val){
-				$tr_head(new HTEL('th/[0]', $col));
-				
-				$counter = 0;
-		
-				foreach ($val as $v){
-					if (!isset($tr[$counter]))
-						$tr[$counter] = new HTEL('tr');
-				
-					$tr[$counter]($v);
-					
-					$counter++;
-				}		
-			}
+        $arr = $this->QUERYANS;
 
-			$tbody($tr_head);
-			
-			foreach ($tr as $r){
-			     $rows[] = new HTEL('tr', $r);
-			}
-			
-			$tbody($rows);
-			
-			//foreach($rows as $r){
-			//	$tbody($r);
-			//}
-			
-			return new HTEL('table .=query_ans_table', $tbody);
+        $cells = array();
+
+        foreach ($arr as $row) {
+            foreach ($row as $col => $val) {
+                $cells[$col][] = new HTEL('td/[0]', $val);
+            }
+        }
+
+        $tbody = new HTEL('tbody');
+
+        $rows = array();
+
+        $tr_head = new HTEL('tr');
+
+        $tr = array();
+
+        $counter = 0;
+
+        foreach ($cells as $col => $val) {
+            $tr_head(new HTEL('th/[0]', $col));
+
+            $counter = 0;
+
+            foreach ($val as $v) {
+                if (!isset($tr[$counter]))
+                    $tr[$counter] = new HTEL('tr');
+
+                $tr[$counter]($v);
+
+                $counter++;
+            }
+        }
+
+        $tbody($tr_head);
+
+        foreach ($tr as $r) {
+            $rows[] = new HTEL('tr', $r);
+        }
+
+        $tbody($rows);
+
+        //foreach($rows as $r){
+        //	$tbody($r);
+        //}
+
+        return new HTEL('table .=query_ans_table', $tbody);
     }
 
-    function close(){
+    function close()
+    {
         $this->CONN->close();
     }
 
-    function __invoke($query = '', $keepAlive = true){
+    function __invoke($query = '', $keepAlive = true)
+    {
         if (empty($query)) return $this->QUERYANS;
         return  $this->query($query, $keepAlive);
     }
 
-    function ans(){
+    function ans()
+    {
         return $this->QUERYANS;
     }
 }
@@ -343,10 +365,11 @@ function phpAlert($msg, $location = '')
 
 function console($msg)
 {
-        echo '<script type="text/javascript">console.log("' . $msg . '")</script>';
+    echo '<script type="text/javascript">console.log("' . $msg . '")</script>';
 }
 
-function strAbbr(string $in, $letCount = 3, $absoluteChrCount = 1):string{
+function strAbbr(string $in, $letCount = 3, $absoluteChrCount = 1): string
+{
     if (strlen($in) <= $letCount) return $in;
 
     $let1 = array(
@@ -376,26 +399,25 @@ function strAbbr(string $in, $letCount = 3, $absoluteChrCount = 1):string{
 
     $tmp = mb_substr($in, $absoluteChrCount);
 
-    for ($i = 0; $i < strlen($tmp); $i++){
+    for ($i = 0; $i < strlen($tmp); $i++) {
         $s = mb_substr($tmp, $i, 1, $enc);
 
-        if (!in_array(mb_strtolower($s, $enc), $let1)){
+        if (!in_array(mb_strtolower($s, $enc), $let1)) {
             $out .= $s;
         }
     }
 
-    if (strlen($out) >= $letCount){
+    if (strlen($out) >= $letCount) {
         return mb_substr($out, 0, $letCount, $enc);
-    }else{
+    } else {
         return strAbbr($in, $letCount, $absoluteChrCount + 1);
     }
-
 }
 
 class MyColor
 {
     public $ID;
-    public string $NAME;
+    public $NAME;
     public $CSS_ANALOG;
     private $MAP;
     private $IS_DEF;
@@ -404,7 +426,7 @@ class MyColor
     {
         $map = array();
 
-        foreach($_map as $m){
+        foreach ($_map as $m) {
             $map[$m['service_ID']][$m['type_ID']][$m['color_ID']] = true;
         }
 
@@ -417,28 +439,32 @@ class MyColor
 
     function AppleTo($servId, $type = 1): bool
     {
-        if (isset($this->MAP[$servId])){
+        if (isset($this->MAP[$servId])) {
             return $this->MAP[$servId][$type][$this->ID] ?? false;
-        }else{
+        } else {
             return $this->Universal();
         }
     }
 
-    function ANS($si):bool{
+    function ANS($si): bool
+    {
         return isset($this->MAP[$si]);
     }
 
-    function Universal():bool{
+    function Universal(): bool
+    {
         return $this->IS_DEF;
     }
 
-    function __toString():string{
+    function __toString(): string
+    {
         return $this->NAME;
     }
 }
 
 
-class ZDATA {
+class ZDATA
+{
     public $ID = 0;
     public $SHOLOM_NUM = null;
     public $SOLD_NUM = null;
@@ -459,22 +485,23 @@ class ZDATA {
 
     function __construct($IN = null)
     {
-        if(is_array($IN))
+        if (is_array($IN))
             $this->SET($IN);
         if (is_int($IN))
             $this->SET('ID', $IN);
     }
 
-    public function SET($arr_or_servid, $color = null){
-           if (is_null($color) && is_array($arr_or_servid)){
-               $this->set_arr($arr_or_servid);
-           }
-           else if(!is_null($color)){
-               $this->set_arr(array($arr_or_servid => $color));
-           }
+    public function SET($arr_or_servid, $color = null)
+    {
+        if (is_null($color) && is_array($arr_or_servid)) {
+            $this->set_arr($arr_or_servid);
+        } else if (!is_null($color)) {
+            $this->set_arr(array($arr_or_servid => $color));
+        }
     }
 
-    private function set_arr(array $in){
+    private function set_arr(array $in)
+    {
         if (isset($in['ID']))
             $this->ID = $in['ID'];
         if (isset($in['sholom_num']))
@@ -509,8 +536,8 @@ class ZDATA {
             $this->REDAKTOR = $in['redaktor'];
 
         if (isset($in['serv'])) {
-            foreach ($in['serv'] as $id=>$tp) {
-                foreach ($tp as $t=>$row) {
+            foreach ($in['serv'] as $id => $tp) {
+                foreach ($tp as $t => $row) {
                     $this->KOMPLECT[$id][$t]['color'] = isset($row['color']) ? $row['color'] : -1;
                     $this->KOMPLECT[$id][$t]['count'] = isset($row['count']) ? $row['count'] : 1;
                     $this->KOMPLECT[$id][$t]['cost'] = isset($row['cost']) ? $row['cost'] : 0;
@@ -520,7 +547,8 @@ class ZDATA {
     }
 
 
-    public function GET_KOMPLECT($id = null, $name = 'cost', $type = 1):string{//ДЛЯ AJAX
+    public function GET_KOMPLECT($id = null, $name = 'cost', $type = 1): string
+    { //ДЛЯ AJAX
 
         if (!is_null($id)) {
             if (isset($this->KOMPLECT[$id][$type][$name])) {
@@ -531,8 +559,8 @@ class ZDATA {
 
         $out = '';
 
-        if (count($this->KOMPLECT) > 0){
-            foreach ($this->KOMPLECT as $i=>$iarr) {
+        if (count($this->KOMPLECT) > 0) {
+            foreach ($this->KOMPLECT as $i => $iarr) {
                 foreach ($iarr as $t => $row) {
                     if ($row['color'] != -1)
                         $out .= "&color_" . $i . "_" . $t . "=" . $row['color'];
@@ -544,18 +572,18 @@ class ZDATA {
 
         return $out;
     }
-
 }
 
-class ZDATA2{
-     protected array $INFO = [];
-     public $ID = 0;
-     public $LOADED = false;
-     public $DISCOUNT_IGNORE = false;
-     public $CLOSED = false;
-     public $TYPE = ZType::NONE;
-     public $NUMBER_LABLE = "sholom_num";
-     public $massangers = [
+class ZDATA2
+{
+    protected array $INFO;
+    public $ID = 0;
+    public $LOADED = false;
+    public $DISCOUNT_IGNORE = false;
+    public $CLOSED = false;
+    public $TYPE = ZType::NONE;
+    public $NUMBER_LABLE = "sholom_num";
+    public $massangers = [
         '',
         'Телеграм',
         'Вотсап',
@@ -565,24 +593,27 @@ class ZDATA2{
         'Наручно',
         'Сигнал',
         'ТікТок'
-     ];
+    ];
 
-     function __construct($id = 0, $type = ZType::NONE){
+    function __construct($id = 0, $type = ZType::NONE)
+    {
         $this->TYPE = $type;
         $this->ID = $id;
         $this->LOAD($id);
-     }
+    }
 
-     protected function VALIDATE_LOAD($shol_num_val):bool{
+    protected function VALIDATE_LOAD($shol_num_val): bool
+    {
         if ($this->TYPE == ZType::NONE)
             return true;
 
         $TABLE_LINE_TYPE = $shol_num_val !== null ? ZType::DEFF : ZType::SOLD;
 
         return $TABLE_LINE_TYPE == $this->TYPE;
-     }
+    }
 
-     function LOAD($id){
+    function LOAD($id)
+    {
         if ($id <= 0)
             return;
 
@@ -590,18 +621,18 @@ class ZDATA2{
 
         $result = $conn->SELECT('client_info', '*', 'WHERE ID = ' . $id);
 
-        if (count($result) == 1 && $this->VALIDATE_LOAD($result[0]["sholom_num"])){
+        if (count($result) == 1 && $this->VALIDATE_LOAD($result[0]["sholom_num"])) {
 
             $this->LOADED = true;
 
             $this->INFO = $result[0];
             //service_number
 
-            if ($this->INFO['sholom_num'] !== null){
+            if ($this->INFO['sholom_num'] !== null) {
                 $this->INFO['service_number'] = $this->INFO['sholom_num'];
                 $this->NUMBER_LABLE = "sholom_num";
                 $this->TYPE = ZType::DEFF;
-            }else{
+            } else {
                 $this->INFO['service_number'] = $this->INFO['sold_number'];
                 $this->NUMBER_LABLE = "sold_number";
                 $this->TYPE = ZType::SOLD;
@@ -610,22 +641,22 @@ class ZDATA2{
             if ($result[0]['date_out'] !== null)
                 $this->CLOSED = true;
 
-                // discount CHECK to ignore
+            // discount CHECK to ignore
 
-            if (is_numeric($result[0]['discount'])){
+            if (is_numeric($result[0]['discount'])) {
                 $this->DISCOUNT_IGNORE = true;
             }
 
             //mess comm
             $temp = explode(' ', $this->INFO['comm']);
 
-            if (count($temp) != 0){
-                foreach($this->massangers as $ind=>$m){
-                      if (strtolower($temp[0]) == strtolower($m)){
-                        $this->INFO['comm'] = substr($this->INFO['comm'], strlen($m)+1);
+            if (count($temp) != 0) {
+                foreach ($this->massangers as $ind => $m) {
+                    if (strtolower($temp[0]) == strtolower($m)) {
+                        $this->INFO['comm'] = substr($this->INFO['comm'], strlen($m) + 1);
                         $this->INFO['mess'] = $ind;
                         break;
-                      }
+                    }
                 }
             }
 
@@ -635,20 +666,21 @@ class ZDATA2{
         }
 
         $conn->close();
-     }
+    }
 
-     protected function SetServ($res):array{
+    protected function SetServ($res): array
+    {
         $out = [];
 
-        foreach($res as $srv){
-            if ($srv['service_ID'] != 19){
+        foreach ($res as $srv) {
+            if ($srv['service_ID'] != 19) {
                 $out[$srv['service_ID']] = [
                     'type_ID' => $srv['type_ID'] * 1,
                     'color' => $srv['color'] * 1,
                     'count' => $srv['count'] * 1,
                     'costs' => $srv['costs'] * 1
                 ];
-            }else{
+            } else {
                 $out[19][$srv['type_ID'] * 1] = [
                     'count' => $srv['count'] * 1,
                     'costs' => $srv['costs'] * 1
@@ -656,37 +688,42 @@ class ZDATA2{
             }
         }
 
-        return $out; 
-     }
+        return $out;
+    }
 
-     function GET($name, $deffault = ''){
+    function GET($name, $deffault = '')
+    {
         return $this->INFO[$name] ?? $deffault;
-     }
+    }
 
-     function GET_SERVICE($id){
+    function GET_SERVICE($id)
+    {
         return $this->INFO['SERVICES'][$id] ?? null;
-     }
+    }
 
-     function GET_SERVICES():array{
+    function GET_SERVICES(): array
+    {
         return $this->INFO['SERVICES'] ?? [];
-     }
+    }
 
-     function ToArray():array{
+    function ToArray(): array
+    {
         return $this->INFO;
-     }
+    }
 
-     function JSONArray(){
+    function JSONArray()
+    {
 
-        if (is_array($this->INFO)){
+        if (is_array($this->INFO)) {
             return json_encode($this->INFO);
-        }else{
+        } else {
             return "{}";
         }
-
-     }
+    }
 }
 
-abstract class ZType{
+abstract class ZType
+{
     const NONE = 0;
     const DEFF = 2;
     const DEFF_A = 1;
@@ -694,14 +731,16 @@ abstract class ZType{
     const SOLD_A = 4;
 }
 
-abstract class ZStatus{
+abstract class ZStatus
+{
     const NONE = -1;
     const NEWZ = 0;
     const INWORK = 1;
     const CLOSED = 2;
 }
 
-function dateToNorm($in, $short = false, $time = false, $sec = false):string{
+function dateToNorm($in, $short = false, $time = false, $sec = false): string
+{
     if (is_null($in)) {
         return '';
     }
@@ -716,16 +755,16 @@ function dateToNorm($in, $short = false, $time = false, $sec = false):string{
 
     $out = '';
 
-    if ($short){
+    if ($short) {
         $out = $myDateTime->format('d.m.y');
-    }else{
+    } else {
         $out = $myDateTime->format('d.m.Y');
     }
 
-    if ($time){
-        if ($sec){
+    if ($time) {
+        if ($sec) {
             $out .= $myDateTime->format(' [H:i:s]');
-        }else{
+        } else {
             $out .= $myDateTime->format(' [H:i]');
         }
     }
@@ -733,26 +772,25 @@ function dateToNorm($in, $short = false, $time = false, $sec = false):string{
     return $out;
 }
 
-function sumArray($in): float{
+function sumArray($in): float
+{
     $out = 0;
 
-    foreach ($in as $i){
-       $out += !is_array($i) ? $i : sumArray($i);
+    foreach ($in as $i) {
+        $out += !is_array($i) ? $i : sumArray($i);
     }
 
     return $out;
 }
 
-function countArraysKey($in, array $ignoreKeys = null):int{
-
-    if (!is_null($ignoreKeys))
-        $ignoreKeys = array();
+function countArraysKey($in, array $ignoreKeys = []): int
+{
 
     $out = 0;
 
-    foreach($in as $k=>$v){
-        if (!is_array($v)){
-            if (!in_array($k, $ignoreKeys)){
+    foreach ($in as $k => $v) {
+        if (!is_array($v)) {
+            if (!in_array($k, $ignoreKeys)) {
                 $out += 1;
             }
         } else {
@@ -785,14 +823,15 @@ function CostOut($in, $_nul_val = '0.00'): string
                     return substr($out, 0, $com + 3) ?? $_nul_val;
             }
         } else {
-            return $out != 0 ? $out . ".00": $_nul_val;
+            return $out != 0 ? $out . ".00" : $_nul_val;
         }
     }
 
     return $_nul_val;
 }
 
-function inclAttr($atr, $in):bool{
+function inclAttr($atr, $in): bool
+{
 
     if ($in == 0 || $atr == $in)
         return true;
@@ -803,7 +842,7 @@ function inclAttr($atr, $in):bool{
     $ost = $in % 2;
     $step = 1;
 
-    for($i=$in; $step <= $in;$i = ($i - $ost) / 2){
+    for ($i = $in; $step <= $in; $i = ($i - $ost) / 2) {
         $ost = $i % 2;
 
         $arr[$step] = $ost;
@@ -811,10 +850,11 @@ function inclAttr($atr, $in):bool{
         $step *= 2;
     }
 
-    return isset($arr[$atr]) ? $arr[$atr] == 1:false;
+    return isset($arr[$atr]) ? $arr[$atr] == 1 : false;
 }
 
-class HTEL {
+class HTEL
+{
 
     private $include_arr = array();
 
@@ -830,11 +870,12 @@ class HTEL {
 
     private $IS_EMPTY = false;
 
-    function __construct(string $input = '', $variables_incl = null){
+    function __construct(string $input = '', $variables_incl = null)
+    {
 
-        if (trim($input) == ''){
-                $this->IS_EMPTY = true;
-                return;
+        if (trim($input) == '') {
+            $this->IS_EMPTY = true;
+            return;
         }
 
         if (!is_null($variables_incl)) {
@@ -864,10 +905,10 @@ class HTEL {
 
         $text_split = explode('/', $input);
 
-        if  (count($text_split) > 1){
+        if (count($text_split) > 1) {
             $input = $text_split[0];
             $this->TEXT = $text_split[1];
-            for ($i=2; $i < count($text_split); $i++)
+            for ($i = 2; $i < count($text_split); $i++)
                 $this->TEXT .= '/' . $text_split[$i];
         }
 
@@ -913,7 +954,7 @@ class HTEL {
 
         $this->element_type = $out[0];
 
-        for ($i = 1; $i < count($out); $i++) {//
+        for ($i = 1; $i < count($out); $i++) { //
 
             $val = explode('=', $out[$i]);
 
@@ -933,7 +974,7 @@ class HTEL {
                 }
             }
 
-            if (!$changed && !empty($val[0])){
+            if (!$changed && !empty($val[0])) {
                 $this->element_args[$val[0]] = $val[1];
             }
         }
@@ -941,7 +982,8 @@ class HTEL {
         $this->IS_EMPTY = false;
     }
 
-    function setAtr($atr_name, $val, $append = false){
+    function setAtr($atr_name, $val, $append = false)
+    {
 
         if ($append) {
             if (isset($this->element_args[$atr_name])) {
@@ -954,41 +996,42 @@ class HTEL {
         }
     }
 
-    private function _sendGlobVars($vars){
-         if (is_array($vars)){
-              foreach ($vars as $k=>$v){
-                   if (!isset($this->VARS[$k]) || is_null($this->VARS[$k])){
-                       //
-                       $this->VARS[$k] = $v;
-                   }
-              }
-         }
-         else{
+    private function _sendGlobVars($vars)
+    {
+        if (is_array($vars)) {
+            foreach ($vars as $k => $v) {
+                if (!isset($this->VARS[$k]) || is_null($this->VARS[$k])) {
+                    //
+                    $this->VARS[$k] = $v;
+                }
+            }
+        } else {
             $this->VARS[0] = $vars;
-         }
+        }
     }
 
-    private function _include($input){
-        if (!is_array($input)){
+    private function _include($input)
+    {
+        if (!is_array($input)) {
             $this->include_arr[] = $input;
-        }
-        else{
-            foreach($input as $in){
+        } else {
+            foreach ($input as $in) {
                 $this->include_arr[] = $in;
             }
         }
     }
 
-    function __invoke($include){
-         if (!$this->IS_EMPTY){
+    function __invoke($include)
+    {
+        if (!$this->IS_EMPTY) {
             $this->_include($include);
-         }
-         else if (is_string($include)){
+        } else if (is_string($include)) {
             $this->__construct($include);
-         }
+        }
     }
 
-    function _tab($val=0):string{
+    function _tab($val = 0): string
+    {
         $tab = "\t\t";
 
         for ($i = 0; $i < ($this->LEVEL + $val); $i++) {
@@ -998,21 +1041,24 @@ class HTEL {
         return $tab;
     }
 
-    function GetChildren():string{
+    function GetChildren(): string
+    {
         $out = '';
 
-        foreach ($this->include_arr as $in){
+        foreach ($this->include_arr as $in) {
             $out .= $in;
         }
 
         return $out;
     }
 
-    function childCount():int{
+    function childCount(): int
+    {
         return count($this->include_arr);
     }
 
-    function __toString(){
+    function __toString()
+    {
 
         if ($this->IS_EMPTY)
             return '';
@@ -1025,14 +1071,14 @@ class HTEL {
 
         $TEXT = $this->clearEmptyVars($this->TEXT);
 
-        foreach ($this->element_args as $arg=>$val){
+        foreach ($this->element_args as $arg => $val) {
             $val = str_replace('%1', '[', $val);
             $val = str_replace('%2', ']', $val);
 
             $out .= ' ' . $arg . '="' . $val . '"';
         }
 
-        switch($this->element_type){
+        switch ($this->element_type) {
             case 'input':
                 $out .= $closer[3] . $TEXT;
                 break;
@@ -1041,14 +1087,14 @@ class HTEL {
                 break;
             default:
                 $out .= $closer[1];
-                   if ($TEXT != ''){
-                       $out .= PHP_EOL . $this->_tab(1) . $TEXT;
-                   }
+                if ($TEXT != '') {
+                    $out .= PHP_EOL . $this->_tab(1) . $TEXT;
+                }
 
-                   foreach ($this->include_arr as $el) {
-                        $el->LEVEL = $this->LEVEL + 1;
-                        $out .= PHP_EOL . $el;
-                   }
+                foreach ($this->include_arr as $el) {
+                    $el->LEVEL = $this->LEVEL + 1;
+                    $out .= PHP_EOL . $el;
+                }
                 $out .=  PHP_EOL . $this->_tab() . $closer[2] . $this->element_type . $closer[1];
                 break;
         }
@@ -1056,7 +1102,8 @@ class HTEL {
         return PHP_EOL . $out;
     }
 
-    private function _setVars(){
+    private function _setVars()
+    {
         if (!is_null($this->VARS))
             foreach ($this->VARS as $id => $chn) {
 
@@ -1079,23 +1126,23 @@ class HTEL {
             }
     }
 
-    function clearEmptyVars($in):string{//[0] ~ [..]
+    function clearEmptyVars($in): string
+    { //[0] ~ [..]
         $out = $in;
 
-        for ($i=0; $i < 10; $i++){
+        for ($i = 0; $i < 10; $i++) {
             $out = str_replace('[' . $i . ']', '', $out);
         }
 
         return $out;
     }
-
 }
 
 function _requestSend(array $arr): string
 {
     $out = '';
 
-    foreach ($arr as $k=>$v){
+    foreach ($arr as $k => $v) {
         $out .= '&' . $k . '=' . $v;
     }
 
@@ -1125,7 +1172,7 @@ class ServiceInfo
 ?>
 
 <script>
-    setInterval(function(){
-        fetch('/ping.php');  
+    setInterval(function() {
+        fetch('/ping.php');
     }, 55 * 60 * 1000);
 </script>
