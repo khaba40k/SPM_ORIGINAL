@@ -1,5 +1,11 @@
 <?php
 
+session_start();
+
+if (!isset($_SESSION['logged']) || !isset($_SESSION[$_SESSION['logged']])){
+    exit;
+}
+
 require_once $_SERVER['DOCUMENT_ROOT'] . "/class/universal.php";
 
 //ВИДАЛЕННЯ РЯДКА
@@ -60,8 +66,6 @@ foreach ($result as $row) {
 $serv_out = array();
 $serv_info = array();
 
-session_start();
-
 $mnth = $_GET['month'];
 $year = $_GET['year'];
 
@@ -75,6 +79,8 @@ if ($mnth < 12){
 
 $query = 'SELECT * FROM service_in WHERE date_in >= "'. $min_date .'" AND date_in < "' . $max_date . '"
 ORDER by date_in DESC';
+
+//Звузити дані журналу до одного користувача
 
 if ($_SESSION[$_SESSION['logged']] > 1){
     $query = 'SELECT * FROM service_in WHERE date_in >= "'.$min_date .'" AND date_in < "'.$max_date .

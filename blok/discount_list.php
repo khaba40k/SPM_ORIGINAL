@@ -2,7 +2,7 @@
 
 session_start();
 
-if ($_SESSION[$_SESSION['logged']] > 1)
+if (!isset($_SESSION[$_SESSION['logged']]) || $_SESSION[$_SESSION['logged']] > 1)
     exit;
 
 require_once $_SERVER['DOCUMENT_ROOT'] . "/class/universal.php";
