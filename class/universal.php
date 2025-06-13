@@ -1,4 +1,7 @@
 <?php
+ini_set('session.gc_maxlifetime', 3600);
+session_set_cookie_params(3600);
+
 function  HIDE(){
      if (!isset($_SESSION['logged'])){
        session_start();
@@ -1120,3 +1123,9 @@ class ServiceInfo
 }
 
 ?>
+
+<script>
+    setInterval(function(){
+        fetch('/ping.php');  
+    }, 55 * 60 * 1000);
+</script>
