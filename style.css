@@ -190,16 +190,11 @@ header a {
     .opis{
         padding: 2% 2%;
         background-color: #445f16;
-/*        background-image: url(../img/texture.png);
-*/        background-size: 10%;
+        background-size: 10%;
         border-radius: 25px;
         font-size: 90%;
         color: #b9dc16;
     }
-
-        .opis > p, .opis > span {
-            /*opacity: 0.6;*/
-        }
 
 nav {
     display: flex;

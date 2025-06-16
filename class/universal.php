@@ -66,16 +66,42 @@ class SQLconn
         return $out_arr;
     }
 
-    function SELECT_DB($fields = "*", $q_end = "")
+    function query_with_index($q = '', $index_field_name, $keepAlive = true){
+        $this->QUERYANS = null;
+        
+        $result = mysqli_query($this->CONN, $q);
+
+        if ($result === true) return true;
+
+        if (!empty($this->CONN->error)) {
+            return $this->CONN->error;
+        }
+
+        $out_arr = array();
+
+        if (mysqli_num_rows($result) > 0) {
+            foreach ($result as $row) {
+                $out_arr[$row[$index_field_name]][] = $row;
+            }
+        }
+
+        if (!$keepAlive) $this->close();
+
+        $this->QUERYANS = $out_arr;
+
+        return $out_arr;
+    }
+
+    function SELECT_DB($fields = "*", $q_end = "", $index_name = "")
     {
         if (!empty($this->DB)) {
-            return $this->SELECT($this->DB, $fields, $q_end);
+            return $this->SELECT($this->DB, $fields, $q_end, $index_name);
         } else {
             return [];
         }
     }
 
-    function SELECT($database, $fields = '*', $q_end = ''): array
+    function SELECT($database, $fields = '*', $q_end = '', $index_name = ""): array
     {
         $this->DB = $database;
 
@@ -114,8 +140,13 @@ class SQLconn
         $flds = str_replace(' ', ', ', trim($flds));
 
         $q = "SELECT " . $flds . " FROM `" . $database . "` " . $q_end;
-
-        return $this->query($q);
+        
+        if (empty($index_name)){
+            return $this->query($q);
+        }else{
+            return $this->query_with_index($q, $index_name);
+        }
+        
     }
 
     function INSERT_DB(array $values, $OD_UPD_KEY = 1, $q_end = '')
