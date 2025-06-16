@@ -27,8 +27,9 @@
     //$_GET['type'] = "archiv";//archive
     //$_GET['variant'] = "def";
 
+    require "test_shop.php";
     //require "test_print.php";
-    require "create_SOLD.php"; //ЗАЛИШИТИ
+    //require "create_SOLD.php"; //ЗАЛИШИТИ
     
     //$inp = new HTEL('input !=explain');
     //$subm = new HTEL('button *=submit !=subm/+');
